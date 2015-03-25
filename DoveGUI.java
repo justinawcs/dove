@@ -52,11 +52,12 @@ public class DoveGUI extends JFrame{
 	private JWindow splash;
 	private JPanel panel, cardPanel, topBar, botBar; // only main panels
 	//card panels-select, content, [eject/load]-drive, list, copy, info, search
-	private JPanel selectCard, contentCard, ejectCard, listCard, 
-					copyCard, infoCard, searchCard;
+	private JPanel welcomeCard, selectCard, contentCard, driveCard, listCard, 
+					copyCard, searchCard;
 	private JPanel center, stage; //sub Panels - selectCard
 	private JCheckBox cVid, cAud, cMus, cDoc, cPic, cOther, cThumbsOnly;
-	private JRadioButton bAZ, bZA, bNew, bOld, bSmall, bLarge; //bTagsANY, bTagsALL;
+	private JRadioButton bAZ, bZA, bNew, bOld, bSmall, bLarge; 
+	//bTagsANY, bTagsALL;
 	private JButton bSearch, bClearSearch, /*bFindTags,*/ bClearTags, bClearAll;
 	private JButton bHelp, bSeeList, bCopy, bRefreshDrives;
 	private JButton bFirst, bPrev, bNext, bLast, bClear, bPager;
@@ -71,12 +72,15 @@ public class DoveGUI extends JFrame{
 	private String search, status, pager;
 	private boolean isSearch, isTags, isThumbsOnly;
 	private enum SortType {AZ, ZA, NEW, OLD, SMALL, LARGE};
-	private final String[] SORT_NAME = {"Alphabetically", "Alphabetically Reversed", "by Newest First",
-			"by Oldest First", "by Smallest First", "by Largest First"}; // Keep synced w/ SortType sort
+	private final String[] SORT_NAME = {"Alphabetically", 
+			"Alphabetically Reversed", "by Newest First",
+			"by Oldest First", "by Smallest First", "by Largest First"}; 
+			// Keep synced w/ SortType sort
 	private final SortType DEFAULT_SORT = SortType.NEW; //Default
 	private SortType sort = DEFAULT_SORT; 
 	private final int BAR_MAX = 10000, PAGE_SIZE = 6;
-	private ArrayList<ContentItem> list = new ArrayList<ContentItem>(), undoList;
+	private ArrayList<ContentItem> list = new ArrayList<ContentItem>(), 
+			undoList;
 	private long listTotalSize = 0, undoSize; 
 	private int bookmark = 0;
 	private final DecimalFormat form = new DecimalFormat("#0.00");
@@ -108,6 +112,9 @@ public class DoveGUI extends JFrame{
 		add(panel);
 		setLocationRelativeTo(null);
 		//pack();
+		makeWelcome();
+		cardPanel.add(welcomeCard, "welcome");
+		cards.show(cardPanel, "welcome");		
 		splash.setVisible(false);
 		setVisible(true);
 		splash.dispose();
@@ -115,7 +122,8 @@ public class DoveGUI extends JFrame{
 	public void startSplash(){
 		splash = new JWindow();
 		JPanel panel = new JPanel(new BorderLayout());
-		panel.setBorder(BorderFactory.createSoftBevelBorder(BevelBorder.RAISED));
+		panel.setBorder(BorderFactory
+				.createSoftBevelBorder(BevelBorder.RAISED));
 		panel.setPreferredSize(new Dimension(250, 60));
 		JLabel text = new JLabel("Loading Project Dove...");
 		text.setFont(new Font("sansserif", Font.BOLD, 20));
@@ -131,6 +139,82 @@ public class DoveGUI extends JFrame{
 		splash.setVisible(true);
 		//Load loader = new Load();
 		//loader.doInBackground();
+	}
+	
+	public void makeWelcome(){
+		welcomeCard = new JPanel();
+		welcomeCard.setLayout(new BorderLayout(10,10));
+		welcomeCard.setBorder(BorderFactory.createEmptyBorder(20,30,20,30) );
+		lStatus.setText("");
+		JLabel lWelcome = new JLabel("<html><center><h1>Welcome!</h1>" +
+				"</center></html>", SwingConstants.CENTER);
+		lWelcome.setBorder(BorderFactory.createEtchedBorder());
+		Box bxWelcome = new Box(BoxLayout.LINE_AXIS);
+			bxWelcome.setBorder(BorderFactory
+					.createEmptyBorder(160, 0, 160, 0));
+			//Font largerFont = new Font(tSearch.getFont().getFontName(), 
+			//		tSearch.getFont().getStyle(), 28);
+			bxWelcome.add(Box.createHorizontalGlue());
+			//bxWelcome.add(lWelcome);
+			//bxWelcome.add(Box.createRigidArea(hSpace));
+			//bxWelcome.add(tSearch);
+			//bxWelcome.add(Box.createRigidArea(hSpace));
+			//bxWelcome.add(bGoSearch);
+			bxWelcome.add(Box.createHorizontalGlue());
+		option = new Box(BoxLayout.LINE_AXIS);
+			bBack = new JButton("Get Started");
+			bBack.setActionCommand("welcome");
+			bBack.addActionListener(new DriveButtonListener() );
+			option.add(Box.createHorizontalGlue());
+			option.add(bBack);
+			//option.add(Box.createRigidArea(new Dimension(10,0)));
+			//option.add(bGoSearch);
+			option.add(Box.createHorizontalGlue());
+		welcomeCard.add(lWelcome, BorderLayout.NORTH);
+		welcomeCard.add(bxWelcome);
+		welcomeCard.add(option, BorderLayout.SOUTH);
+	}
+	
+	public void makeDrive(){
+		//show drive choice: 
+		driveCard = new JPanel();
+		driveCard.setLayout(new BorderLayout());
+		driveCard.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
+		String h = "<html>Choose your storage device.</html>";
+		lStatus.setText(h);
+		JPanel drv = new JPanel();
+			int len = main.getDevices().getInfoArray().length;
+			drv.setLayout(new GridLayout(len,1,10,10));
+			drv.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+			for(int i=0; i < len; i++){
+				String name = main.getDevices().getInfoArray()[i];
+				JButton num;
+				if(main.getDevices().getMountedIndex() == i){
+					num = new JButton("<html>" + name + 
+							"<br />Now Mounted</html>");
+				}else{
+					num = new JButton(name);
+				}
+				num.setVerticalAlignment(SwingConstants.CENTER);
+				num.setVerticalTextPosition(SwingConstants.BOTTOM);
+				num.setHorizontalTextPosition(SwingConstants.CENTER);
+				num.addActionListener(new DriveMountListener() );
+				num.setActionCommand(String.valueOf(i));
+				drv.add(num);
+			}
+		option = new Box(BoxLayout.LINE_AXIS);
+			JButton bRefresh = new JButton("Refresh");
+			bRefresh.addActionListener(new DriveRefreshListener() );
+			JButton bSkip = new JButton("Skip");
+			bSkip.addActionListener(new BackButtonListener());
+			option.add(Box.createHorizontalGlue());
+			option.add(bRefresh);
+			option.add(Box.createRigidArea(hSpace));
+			option.add(bSkip);
+			//option.add(Box.createRigidArea(hSpace) );
+			option.add(Box.createHorizontalGlue());
+		driveCard.add(drv, BorderLayout.CENTER);
+		driveCard.add(option, BorderLayout.SOUTH);
 	}
 /*	//Disabled content item counter for loading, non functional
  * 	private class Load extends SwingWorker<Void, Void>{
@@ -179,7 +263,8 @@ public class DoveGUI extends JFrame{
 		tSearch.addFocusListener(new FocusListener() {
 		    @Override
 		    public void focusGained(FocusEvent e) {
-		        tSearch.setText(null); // Empty the text field when it receives focus
+		        tSearch.setText(null); // Empty the text field when it receives
+		        focus
 		    }
 		    @Override
 		    public void focusLost(FocusEvent e) {
@@ -305,14 +390,15 @@ public class DoveGUI extends JFrame{
 		//# items found, search term, sorted by, of type __
 		topBar = new JPanel();
 		topBar.setLayout(new BorderLayout(10,10) );
-		JLabel greet = new JLabel("<html><h2>Welcome!</h2></html>");
+		topBar.setBorder(BorderFactory.createEmptyBorder(5, 10, 0, 10));
+		//JLabel greet = new JLabel("<html><h2>Welcome!</h2></html>");
 		//greet.setFont(new Font(20)); // or just increase font size to larger
 		lStatus = new JLabel();
 		//lStatus.setAlignmentY(0.5f);
 		updateStatus();
 		bHelp = new JButton("Help...");
 		bHelp.addActionListener(new HelpButtonListener());
-		topBar.add(greet, BorderLayout.WEST);
+		//topBar.add(greet, BorderLayout.WEST);
 		topBar.add(lStatus,BorderLayout.CENTER);
 		topBar.add(bHelp, BorderLayout.EAST);
 		panel.add(topBar, BorderLayout.NORTH);
@@ -357,7 +443,6 @@ public class DoveGUI extends JFrame{
 		//bEject.addActionListener(new EjectButtonListener() );
 		//bDriveInfo = new JButton("Drive Info...");
 		//bDriveInfo.addActionListener(new DriveInfoButtonListener() );
-		
 		Box hz = new Box(BoxLayout.LINE_AXIS);
 			hz.add(Box.createRigidArea(hSpace));
 			//hz.add(bDriveInfo);
@@ -380,7 +465,8 @@ public class DoveGUI extends JFrame{
 		afterBar = new JProgressBar(SwingConstants.HORIZONTAL, 0, BAR_MAX);
 		updateBars();
 		Box vt = new Box(BoxLayout.PAGE_AXIS);
-			vt.setBorder(BorderFactory.createTitledBorder("Drive Capacity Used") );
+			vt.setBorder(BorderFactory.createTitledBorder(
+					"Drive Capacity Used") );
 			vt.add(beforeBar);
 			vt.add(afterBar);
 		botBar.add(Box.createRigidArea(vSpace), BorderLayout.NORTH);
@@ -438,8 +524,9 @@ public class DoveGUI extends JFrame{
 		contentCard = new JPanel();
 		contentCard.setLayout(new BorderLayout(10,10) );
 		contentCard.setBorder(BorderFactory.createEmptyBorder(0,10,10,10) );
-		JLabel lName = new JLabel("<html><center><h2>"+peek.getInfo().getName()+
-				"</h2></center></html>", SwingConstants.CENTER);
+		JLabel lName = new JLabel("<html><h2>"+peek.getInfo().getName()
+				+ "</h2></html>", SwingConstants.CENTER);
+		//NOTE: SwingConstants center to the rescue!!
 		lName.setBorder(BorderFactory.createEtchedBorder());
 		Image img;
 			try{
@@ -461,9 +548,9 @@ public class DoveGUI extends JFrame{
 			}
 		String d = Dove.humanReadableByteCount(peek.getSize(),false);
 		String per = (main.getDevices().isMounted() ? 
-				" or "+perc.format((double)peek.getSize() /(double) main.getDevices().
-						getMountedDrive().getTotalSpace() ) +
-				" of drive capacity." : "" );
+				" or "+perc.format((double)peek.getSize() / 
+						(double) main.getDevices().getMountedDrive()
+						.getTotalSpace() ) +" of drive capacity." : "" );
 		//JLabel lSize = new JLabel("Size: "+ d + per, SwingConstants.RIGHT);
 		/*Box bxSize = new Box(BoxLayout.LINE_AXIS);
 			bxSize.add(Box.createRigidArea(hSpace));
@@ -481,14 +568,21 @@ public class DoveGUI extends JFrame{
 			//bxThumb2.setAlignmentX(0.5f);
 		Box info = new Box(BoxLayout.PAGE_AXIS);
 			String h1 = "<html><body style='width:310px'><table> ";
-			//h1 += "<tr><td valign='baseline'>Name:</td> <td>"+peek.getInfo().getName()+"</td></tr>";
-			h1 += "<tr><td valign='baseline'>Size:</td> <td>"+ d + per+"</td></tr>";
-			h1 += "<tr><td valign='baseline'>Origin:</td> <td>"+peek.getInfo().getOrigin()+"</td></tr>";
-			h1 += "<tr><td valign='baseline'>Description:</td> <td>"+peek.getInfo().getDesc()+"</td></tr>";
-			h1 += "<tr><td valign='baseline'>Date:</td> <td>"+peek.getInfo().getDate().toString()+"</td></tr>";
-			//System.out.println( (double)peek.getSize() /(double) main.getDevices().getMountedDrive().getTotalSpace() );
+			//h1 += "<tr><td valign='baseline'>Name:</td> <td>"+peek.getInfo()
+				//.getName()+"</td></tr>";
+			h1 += "<tr><td valign='baseline'>Size:</td> <td>"+ d + per+
+					"</td></tr>";
+			h1 += "<tr><td valign='baseline'>Date:</td> <td>"+
+					peek.getInfo().getDate().toString()+"</td></tr>";
+			//System.out.println( (double)peek.getSize() /(double) 
+				//main.getDevices().getMountedDrive().getTotalSpace() );
 			//h1 += "<tr><td>Size:</td> <td>"+ d + per +"</td></tr>";
-			h1 += "<tr><td>Media Type:</td> <td>"+ peek.getInfo().getTagsString() +"</td></tr>";
+			h1 += "<tr><td>Media Type:</td> <td>"+ peek.getInfo()
+					.getTagsString() +"</td></tr>";
+			h1 += "<tr><td valign='baseline'>Origin:</td> <td>" + 
+					peek.getInfo().getOrigin()+"</td></tr>";
+			h1 += "<tr><td valign='baseline'>Description:</td> <td>" + 
+					peek.getInfo().getDesc()+"</td></tr>";
 			h1 += "<tr><td valign='baseline'>File List:</td> <td>";
 				for(String names : peek.getNames() ){
 					h1 += names + "<br />";
@@ -496,7 +590,8 @@ public class DoveGUI extends JFrame{
 			h1 += "</table></body></html>";
 			lData = new JLabel(h1);
 			JScrollPane scroll = new JScrollPane(lData);
-			scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+			scroll.setHorizontalScrollBarPolicy(
+					ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 			scroll.setBorder(BorderFactory.createEmptyBorder(5,0,5,0) );
 			info.add(Box.createVerticalGlue());
 			info.add(scroll);
@@ -526,18 +621,6 @@ public class DoveGUI extends JFrame{
 		contentCard.add(option, BorderLayout.SOUTH);
 	}
 	
-	public void makeInfo(){
-		//show drive details: 
-		infoCard = new JPanel();
-		infoCard.setLayout(new BorderLayout());
-	}
-	
-	public void makeEject(){
-		//insta stop device, show eject now button, choose diff drive by combo box
-		ejectCard = new JPanel();
-		ejectCard.setLayout(new BorderLayout());
-	}
-	
 	public void makeList(){
 		listCard = new JPanel();
 		listCard.setLayout(new BorderLayout(10,10));
@@ -547,8 +630,10 @@ public class DoveGUI extends JFrame{
 		if(!main.getDevices().isMounted() ){
 			h+="<br />Please mount a drive from the Drop Down box Below," +
 					" to see available space.";
-		}else if(listTotalSize >= main.getDevices().getMountedDrive() .getFreeSpace()){
-			long over = listTotalSize - main.getDevices().getMountedDrive().getFreeSpace();
+		}else if(listTotalSize >= main.getDevices().getMountedDrive()
+				.getFreeSpace()){
+			long over = listTotalSize - main.getDevices().getMountedDrive()
+					.getFreeSpace();
 			String overS = Dove.humanReadableByteCount(over, false);
 			double overPer = (double)over / (double)listTotalSize;
 			h+="<br />The list is over capacity. Remove at least " + overS + 
@@ -581,9 +666,10 @@ public class DoveGUI extends JFrame{
 		}else{
 		for(int i=0; i<count; i++){
 			bx[i] = new Box(BoxLayout.LINE_AXIS);
-				Double per = (double)(list.get(i).getSize()) / (double)(listTotalSize);
+				Double per = (double)(list.get(i).getSize()) / 
+						(double)(listTotalSize);
 				String text = "<html>"+ list.get(i).getInfo().getName() +" : "+
-						Dove.humanReadableByteCount(list.get(i).getSize(), false) +
+					Dove.humanReadableByteCount(list.get(i).getSize(), false) +
 						"<br/>"+ form.format(per*100) + "% of List";
 				//System.out.println(list.get(i).getInfo().getName() +"\t"+
 				//		list.get(i).hasImage());
@@ -593,7 +679,9 @@ public class DoveGUI extends JFrame{
 					item[i] = new JButton(text, ico);
 				}catch(NullPointerException e){
 					item[i] = new JButton(text);
-					item[i].setMargin(new Insets(11,66,11,0));
+					item[i].setMargin(null);
+					//item[i].setMargin(new Insets(11,66,11,0)); 
+	//TODO remove magic numbers, fix heigths with math
 				}
 				item[i].setHorizontalAlignment(SwingConstants.LEFT);
 				item[i].setVerticalTextPosition(SwingConstants.CENTER);
@@ -601,7 +689,7 @@ public class DoveGUI extends JFrame{
 				item[i].addActionListener(new ItemButtonListener() );
 				item[i].setActionCommand(String.valueOf(i));
 				del[i] = new JButton("Remove");
-				del[i].setMargin(new Insets(19,3,19,3)); //corresponds to 48h icon
+				del[i].setMargin(new Insets(19,3,19,3)); //makes 48h icon
 				del[i].setActionCommand(String.valueOf(i));
 				del[i].addActionListener(new RemoveButtonListener());
 				bx[i].add(item[i]);
@@ -638,8 +726,10 @@ public class DoveGUI extends JFrame{
 		copyCard = new JPanel();
 		copyCard.setLayout(new BorderLayout(05,10) );
 		copyCard.setBorder(BorderFactory.createEmptyBorder(20,30,20,30) );
-		lStatus.setText("Correct any issues listed below, then copy files to your device.");
-		// Preconditions list occupied, list size okay, drive mounted, Dove heierachy setup
+		lStatus.setText("Correct any issues listed below, then copy files " +
+				"to your device.");
+		// Preconditions list occupied, list size okay, drive mounted, 
+		// Dove heierachy setup
 		Box bxCopy = new Box(BoxLayout.PAGE_AXIS);
 			JButton listOcc = new JButton();
 			String h = "<html>";
@@ -649,7 +739,8 @@ public class DoveGUI extends JFrame{
 					listOcc.setText(h+"List contains items."+h2);
 					listOcc.setEnabled(false);
 				}else{
-					listOcc.setText(h+"Items must be added to the list to start copying."+h2);
+					listOcc.setText(h+"Items must be added to the list to " +
+						"start copying."+h2);
 					listOcc.setEnabled(true);
 					listOcc.setActionCommand("copy");
 					listOcc.addActionListener(new BackButtonListener() );
@@ -673,8 +764,8 @@ public class DoveGUI extends JFrame{
 					drvMounted.setText(h+"Drive properly mounted."+h2);
 					drvMounted.setEnabled(false);
 				}else{
-					drvMounted.setText(h+"Please mount a drive from the Drop-" +
-							"Down List below."+h2);
+					drvMounted.setText(h+"Please mount a drive from the Drop-"
+						+ "Down List below."+h2);
 					drvMounted.setEnabled(true);// no button action
 					flag++;
 				}
@@ -705,14 +796,16 @@ public class DoveGUI extends JFrame{
 				bxCopy.add(arr[i]);
 				bxCopy.add(Box.createRigidArea(new Dimension(0,10)) );
 			}
-			JButton copyGo  = new JButton(h+"<center>Transfer Files<br/>Now!</center>");
+			JButton copyGo  = new JButton(h+"<center>Transfer Files<br/>Now!" +
+					"</center>");
 				copyGo.setHorizontalTextPosition(SwingConstants.CENTER);
 				copyGo.setHorizontalAlignment(SwingConstants.CENTER);
 				copyGo.setMargin(new Insets(20,0,20,0));//taller button
 				copyGo.addActionListener(new FinalCopyButtonListener() );
 				copyGo.setEnabled(flag == 0);
 			Box bxBar = new Box(BoxLayout.PAGE_AXIS);
-				bxBar.setBorder(BorderFactory.createTitledBorder("Copy Progress"));
+				bxBar.setBorder(BorderFactory.createTitledBorder(
+						"Copy Progress"));
 				copyBar = new JProgressBar(SwingConstants.HORIZONTAL);
 					//copyBar.setIndeterminate(true);
 					//copyBar.setMaximum((int)listTotalSize);
@@ -723,10 +816,12 @@ public class DoveGUI extends JFrame{
 				bxBar.add(copyBar);
 				bxBar.add(Box.createRigidArea(vSpace)); 
 				bxBar.add(filesRemaining);
-			//JLabel success = new JLabel("<html><h2>Files copied successfully.</h2>");
+			//JLabel success = new JLabel("<html><h2>Files copied successfully.
+				//</h2>");
 			//	success.setEnabled(false);
 			bRemoveDevice = new JButton("Unmount device to safely remove it.");
-				bRemoveDevice.addActionListener(new RemoveDeviceButtonListener() );
+				bRemoveDevice.addActionListener(
+						new RemoveDeviceButtonListener() );
 				bRemoveDevice.setEnabled(false);
 			bxCopy.add(Box.createRigidArea(new Dimension(0,50)) );
 			bxCopy.add(copyGo);
@@ -786,8 +881,8 @@ public class DoveGUI extends JFrame{
 			option.add(Box.createHorizontalGlue());
 		searchCard.add(bxSearch, BorderLayout.CENTER);
 		searchCard.add(option, BorderLayout.SOUTH);
-		tSearch.grabFocus();
-		tSearch.requestFocusInWindow();
+		//tSearch.grabFocus(); 	//performed in actionListener
+		//tSearch.requestFocusInWindow(); //performed in actionListener
 		//searchCard.add(stuff);
 	}
 	
@@ -808,7 +903,8 @@ public class DoveGUI extends JFrame{
 		stage.setBorder(BorderFactory.createEmptyBorder(5,0,0,10) );
 		//Num of grid items is PAGE_SIZE
 		bookmark = start;
-		//int count = main.getSource().getLength() < PAGE_SIZE ? main.getSource().getLength() : PAGE_SIZE;
+		//int count = main.getSource().getLength() < PAGE_SIZE ? 
+			//main.getSource().getLength() : PAGE_SIZE;
 		int count = main.getSource().getLength();
 		//System.out.println(start +" "+ bookmark +" "+ count);
 		for(int i=start; i < (start+PAGE_SIZE) ;i++){
@@ -818,7 +914,8 @@ public class DoveGUI extends JFrame{
 				//System.out.println("  " + name);
 				ImageIcon icon;
 				try{
-					icon = new ImageIcon(main.getSource().getItemAt(i).getImageScaledFast(160,160));
+					icon = new ImageIcon(main.getSource().getItemAt(i)
+							.getImageScaledFast(160,160));
 				}catch(NullPointerException e){
 					icon = null;
 				}
@@ -867,7 +964,8 @@ public class DoveGUI extends JFrame{
 		int page = (bookmark / PAGE_SIZE)+1;
 		int pageMax = ((main.getSource().getLength() - 1) / PAGE_SIZE ) +1  ;
 		pager = "Page " + page +" of "+ pageMax;
-		//pager = (bookmark+1) +" : "+Integer.valueOf(bookmark+PAGE_SIZE).toString(); 
+		//pager = (bookmark+1) +" : "+Integer.valueOf(bookmark+PAGE_SIZE)
+		//.toString(); 
 				//+" of " + main.getSource().getLength();
 		//System.out.println("[DoveGUI.updatePager] Pager: "+ pager);
 		bPager.setText(pager);
@@ -880,11 +978,11 @@ public class DoveGUI extends JFrame{
 		//try{
 		//	nav.revalidate();
 		//}catch(NullPointerException e){}
-		
 		//System.out.println("Updating Button: "+temp);
 		//System.out.println(bPager.getText());
 		//lPager.setText(bPager.getText());
 	}
+	
 	private void updateNav(){
 		if(bookmark+PAGE_SIZE >= main.getSource().getLength() ){
 			bNext.setEnabled(false);
@@ -923,19 +1021,23 @@ public class DoveGUI extends JFrame{
 	private void updateBars(){
 			double percentRemBefore, percentRemAfter;
 			if(main.getDevices().isMounted() ){
-				percentRemBefore = main.getDevices().getMountedDrive().getPercentRem();
-				percentRemAfter = main.getDevices().getMountedDrive().getPercentRem(listTotalSize);
+				percentRemBefore = main.getDevices().getMountedDrive()
+						.getPercentRem();
+				percentRemAfter = main.getDevices().getMountedDrive()
+						.getPercentRem(listTotalSize);
 				double beforeVal = BAR_MAX - percentRemBefore * (BAR_MAX/100);
 				//beforeBar.setForeground(new Color(96, 128, 64));
 				//System.out.println(beforeBar.getForeground());
 				beforeBar.setValue(Double.valueOf(beforeVal).intValue() );
-				beforeBar.setString("Now: " + form.format(beforeVal/100) + "%" );
-				beforeBar.setToolTipText("The current amout of space currently used on the drive.");
+				beforeBar.setString("Now: " + form.format(beforeVal/100) + "%");
+				beforeBar.setToolTipText("The current amout of space currently"
+						+ " used on the drive.");
 				beforeBar.setStringPainted(true);
 				double afterVal = BAR_MAX - percentRemAfter * (BAR_MAX/100);  
 				afterBar.setValue(Double.valueOf(afterVal).intValue());
-				afterBar.setString("After: "+  form.format(afterVal/100) + "%" );
-				afterBar.setToolTipText("The value amount of space that will be used by the drive after the file transfer.");
+				afterBar.setString("After: "+  form.format(afterVal/100) + "%");
+				afterBar.setToolTipText("The value amount of space that will" +
+						" be used by the drive after the file transfer.");
 				afterBar.setStringPainted(true);
 				if(percentRemAfter < 00.0d){
 					afterBar.setForeground(new Color(5, 5, 5));
@@ -960,11 +1062,13 @@ public class DoveGUI extends JFrame{
 			}
 	/*		double beforeVal = BAR_MAX - percentRemBefore * (BAR_MAX/100);
 			beforeBar.setValue(Double.valueOf(beforeVal).intValue() );
-			beforeBar.setString("Before: " + Double.toString(beforeVal/100).substring(0, 5) + "%" );
+			beforeBar.setString("Before: " + Double.toString(beforeVal/100)
+			.substring(0, 5) + "%" );
 			beforeBar.setStringPainted(true);
 			double afterVal = BAR_MAX - percentRemAfter * (BAR_MAX/100);  
 			afterBar.setValue(Double.valueOf(afterVal).intValue());
-			afterBar.setString("After: "+  Double.toString(afterVal/100).substring(0, 5) + "%" );
+			afterBar.setString("After: "+  Double.toString(afterVal/100)
+			.substring(0, 5) + "%" );
 			afterBar.setStringPainted(true);
 	*/
 		}
@@ -983,7 +1087,8 @@ public class DoveGUI extends JFrame{
 		//driveList.setPreferredSize(new Dimension(50, 0) );
 	}
 	private String getTags(){
-		String hold = "Searching for " + /*(bTagsANY.isSelected() ? "any":"all") */ "any"+ 
+		String hold = "Searching for " + 
+	/*(bTagsANY.isSelected() ? "any":"all") */ "any"+ 
 				" media of type: ";
 		hold += cVid.isSelected() ? "Video, " : "";
 		hold += cAud.isSelected() ? "Audio, " : "" ;
@@ -1221,8 +1326,9 @@ public class DoveGUI extends JFrame{
 					cMus.isSelected(), cDoc.isSelected(), cPic.isSelected(), 
 					cOther.isSelected() );
 			}else{//item was deselected
-				if(cVid.isSelected() || cAud.isSelected() || cMus.isSelected() ||
-						cDoc.isSelected() || cPic.isSelected() || cOther.isSelected()){
+				if(cVid.isSelected() || cAud.isSelected() || cMus.isSelected() 
+						||cDoc.isSelected() || cPic.isSelected() 
+						|| cOther.isSelected()){
 					// at least one item is still selected
 					main.getSource().tags(cVid.isSelected(), cAud.isSelected(),
 						cMus.isSelected(), cDoc.isSelected(), cPic.isSelected(), 
@@ -1235,13 +1341,13 @@ public class DoveGUI extends JFrame{
 /*			if(cVid.isSelected() || cAud.isSelected() || cMus.isSelected() ||
 				cDoc.isSelected() || cPic.isSelected() || cOther.isSelected()){
 				if(bTagsANY.isSelected()){
-					main.getSource().tagsAny(cVid.isSelected(), cAud.isSelected(),
-						cMus.isSelected(), cDoc.isSelected(), 
-						cPic.isSelected(), cOther.isSelected() );
+					main.getSource().tagsAny(cVid.isSelected(), 
+					cAud.isSelected(),cMus.isSelected(), cDoc.isSelected(), 
+					cPic.isSelected(), cOther.isSelected() );
 				}else if (bTagsALL.isSelected()){
-					main.getSource().tagsAll(cVid.isSelected(), cAud.isSelected(),
-							cMus.isSelected(), cDoc.isSelected(), 
-							cPic.isSelected(), cOther.isSelected() );
+					main.getSource().tagsAll(cVid.isSelected(), 
+						cAud.isSelected(),cMus.isSelected(), cDoc.isSelected(), 
+						cPic.isSelected(), cOther.isSelected() );
 				}else{
 					System.out.println("Code is all screwed up!");
 				}
@@ -1298,8 +1404,25 @@ public class DoveGUI extends JFrame{
 	private class HelpButtonListener implements ActionListener{
 		public void actionPerformed(ActionEvent e){
 			//TODO display help panel. ??? web call
-			JPanel help = new JPanel();
-			help.setVisible(true);
+			//JPanel help = new JPanel();
+			//help.setVisible(true);
+			cardPanel.add(welcomeCard, "welcome");
+			cards.show(cardPanel, "welcome");
+		}
+	}
+	private class WelcomeButtonListener implements ActionListener{
+		public void actionPerformed(ActionEvent e){
+			makeWelcome();
+			cardPanel.add(welcomeCard, "welcome");
+			cards.show(cardPanel, "welcome");
+		}
+	}
+	
+	private class DriveButtonListener implements ActionListener{
+		public void actionPerformed(ActionEvent e){
+			makeDrive();
+			cardPanel.add(driveCard, "drive");
+			cards.show(cardPanel, "drive");
 		}
 	}
 	
@@ -1310,7 +1433,7 @@ public class DoveGUI extends JFrame{
 			}catch(IOException io){
 				io.printStackTrace();
 			}
-			updateDriveList();
+			//updateDriveList();
 		}
 	}
 	
@@ -1342,12 +1465,34 @@ public class DoveGUI extends JFrame{
 			//TODO add refresh page, get card name and redraw card
 		}
 	}
+	private class DriveMountListener implements ActionListener{
+		public void actionPerformed(ActionEvent e){
+			int num = Integer.parseInt(e.getActionCommand() );
+			JButton drv = ((JButton) e.getSource());
+			//default unmount
+			if(main.getDevices().isMounted()){
+				main.getDevices().unmount();
+			}
+				System.out.print("unmount");
+				//drv.setSelected(true);
+			//drv.setSelected(false);
+			main.getDevices().mount(num);
+			drv.setText(main.getDevices().getInfoArray()[num]+
+					"\n--Now Mounted--");
+			updateBars();
+			cardPanel.remove(driveCard);
+			cards.first(cardPanel);
+			//if( ){//unmount on any change}
+			
+		}
+	}
 	
 	private class ItemButtonListener implements ActionListener{
 		public void actionPerformed(ActionEvent e){
 			//System.out.println(e.getActionCommand());
 			int num = Integer.parseInt(e.getActionCommand() );
-			//System.out.println(num + ":" + main.getSource().getItemAt(num).toString());
+			//System.out.println(num + ":" + main.getSource().getItemAt(num)
+				//.toString());
 			makeContent(main.getSource().getItemAt(num), num);
 			cardPanel.add(contentCard, "content");
 			cards.show(cardPanel, "content");
@@ -1436,7 +1581,8 @@ public class DoveGUI extends JFrame{
 				}
 			}
 			copyBar.setString("Finished.");
-			System.out.println("Done. Copied: "+ bytesCopied +" ListSize: "+ listTotalSize );  
+			System.out.println("Done. Copied: "+ bytesCopied +" ListSize: " +
+					listTotalSize );  
 			bRemoveDevice.setEnabled(true);
 			return null;
 		}
@@ -1485,7 +1631,8 @@ public class DoveGUI extends JFrame{
 				}
 			}else if(nav.contentEquals("last") ){
 				int hold = main.getSource().getLength() / PAGE_SIZE;
-				hold = (main.getSource().getLength() % PAGE_SIZE == 0 ? hold-1: hold);
+				hold = (main.getSource().getLength() % PAGE_SIZE == 0 ?
+						hold-1: hold);
 				bookmark = hold * PAGE_SIZE;
 				updateGrid(bookmark);
 				//System.out.println("Go last.");
@@ -1539,7 +1686,8 @@ public class DoveGUI extends JFrame{
 	
 	private class RemoveButtonListener implements ActionListener{
 		public void actionPerformed(ActionEvent e){
-			((JComponent) e.getSource()).getParent().setVisible(false);//abra-cadabra
+			((JComponent) e.getSource()).getParent().setVisible(false);
+			//abra-cadabra
 			int item = Integer.parseInt(e.getActionCommand());
 			listTotalSize -= list.get(item).getSize();
 			list.remove(item);
@@ -1578,7 +1726,7 @@ public class DoveGUI extends JFrame{
 				while(index > i){
 					listTotalSize -= list.get(index).getSize();
 					list.remove(index);
-					index = list.lastIndexOf(list.get(i) );// IDEA use a while loop!
+					index = list.lastIndexOf(list.get(i) );
 				}
 			}
 			updateBars();

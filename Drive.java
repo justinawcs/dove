@@ -21,10 +21,18 @@ public class Drive {
 	
 	public void checkSetup(){
 		boolean check = false;
+		boolean exist = false;
 		//if [drive]/Dove/ exists then isSetup = true
 		final String dove = "Dove";
 		//final String doveDat = "Dove.dat"; 
-		for(int i=0; i<drv.list().length; i++){
+		//try{
+			exist = drv.exists();
+			if(!exist){
+				System.out.println("Drive does not exist.");
+			}
+		//}
+		if(exist){
+			for(int i=0; i<drv.list().length; i++){
 			if(drv.list()[i].equals(dove) && drv.listFiles()[i].isDirectory()){
 				check = true;	
 			}else{// Just looping through.
@@ -37,8 +45,8 @@ public class Drive {
 						check = true;
 					}
 				}
-				
 			}*/
+			}
 		}
 		isSetup = check;
 		if(!isSetup){

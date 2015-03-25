@@ -71,7 +71,7 @@ public class KernelMesg {
 	}
 
 	private static ArrayList<String> execBash() throws IOException{
-		String com = "dmesg | grep -i 'usb' ";
+		final String com = "dmesg | grep -i 'usb' ";
 		// file:  /var/log/dmesg
 		Process p = Runtime.getRuntime().exec(new String[] {
 				//example: "bash", "-c", "/home/jaw/bin/java/Dove/DriveInfo.sh"
@@ -91,6 +91,7 @@ public class KernelMesg {
 		String s = null, e = null;
 		ArrayList<String> data = new ArrayList<String>();
 		//s = reader.readLine();
+		//while 
 		while ((s = reader.readLine()) != null) {
 			e = ereader.readLine();
 			data.add(s);
@@ -113,10 +114,17 @@ public class KernelMesg {
 		}*/
 		Scanner key = new Scanner(System.in);
 		KernelMesg km = new KernelMesg();
-		System.out.print("Change drives and hit enter when ready.");
-		key.nextLine();
-		//km.update();
-		System.out.println("Data changed: " + km.update());
+		boolean end = false;
+		while(!end){
+			System.out.print("Change drives and hit enter to update. Type q to quit. ");
+			if(key.nextLine().equalsIgnoreCase("q")){
+				end = true;
+				System.out.println("Terminated.");
+			}else{
+				System.out.println("Data changed: " + km.update());
+			}
+			//km.update();
+		}
 		key.close();
 	}
 }

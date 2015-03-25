@@ -106,7 +106,7 @@ public class Devices {
 		for(int i=0; i<devs.length; i++){
 			devs[i] = new DeviceItem(location[i], label[i], size[i]);
 		}
-		System.out.println("[Devices] "+ toString() );
+		System.out.println("[Devices.refresh] "+ toString() );
 	}
 	public boolean mount(int index){
 		//mount command
@@ -173,6 +173,17 @@ public class Devices {
 			return null;
 		}
 	}
+	public int getMountedIndex(){
+		if(mounted != null){
+			return mounted;
+		}else{//mounted == null
+			return -1;
+		}
+	}
+	public Drive getMountedDrive(){
+		return drv;
+	}
+
 	public void addDevice(String loc, String lbl, String sz){
 		//ex. DeviceItem more = new DeviceItem("/tmp/ramdisk/","Ramdisk","16M");
 		deviceAdder(new DeviceItem(loc, lbl, sz) );
@@ -189,10 +200,6 @@ public class Devices {
 		devs = temp;
 	}
 	
-	public Drive getMountedDrive(){
-		return drv;
-	}
-
 	public String[] getInfoArray(){
 		String[] temp = new String[devs.length];
 		for(int i=0; i<devs.length; i++){
