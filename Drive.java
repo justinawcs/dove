@@ -20,11 +20,14 @@ public class Drive {
 	}
 	
 	public void checkSetup(){
+		checkSetup("Dove");
+	}
+	public void checkSetup(String name){
 		boolean check = false;
 		boolean exist = false;
 		//if [drive]/Dove/ exists then isSetup = true
-		final String dove = "Dove";
-		//final String doveDat = "Dove.dat"; 
+		//final String dove = "Dove"; // added to 
+		//final String doveDat = "Dove.dat"; //no longer check for Dove.dat
 		//try{
 			exist = drv.exists();
 			if(!exist){
@@ -33,7 +36,7 @@ public class Drive {
 		//}
 		if(exist){
 			for(int i=0; i<drv.list().length; i++){
-			if(drv.list()[i].equals(dove) && drv.listFiles()[i].isDirectory()){
+			if(drv.list()[i].equals(name) && drv.listFiles()[i].isDirectory()){
 				check = true;	
 			}else{// Just looping through.
 			}
