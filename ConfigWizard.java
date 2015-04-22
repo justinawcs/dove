@@ -18,10 +18,11 @@ public class ConfigWizard {
 			graphicInterface();
 		}
 	}
+	
 	public static void graphicInterface(){
 		//TODO add main frame and change panels to internal within frame,
 		//and additional explanations in main panel 
-		String mountLoc ="", contentLoc ="";
+		String mountLoc ="", contentLoc ="", folderName="";
 		boolean grepEx=true, noThumbs=true, searchFileNames=true;
 		//Load config.cfg properties
 		Properties configProps = new Properties();
@@ -38,6 +39,7 @@ public class ConfigWizard {
 			}
 			mountLoc = configProps.getProperty("mountLocation");
 			contentLoc = configProps.getProperty("contentLocation");
+			folderName = configProps.getProperty("folderName");
 			grepEx = Boolean.parseBoolean(configProps.getProperty("grepExcludes") );
 			noThumbs = Boolean.parseBoolean(configProps.getProperty("allowNoThumbContent") );
 			searchFileNames = Boolean.parseBoolean(configProps.getProperty("searchFileNames") );
@@ -83,6 +85,17 @@ public class ConfigWizard {
 				done = true;
 				break;
 			}
+			
+			//FolderName Dialog
+			header = "Please enter the name that the folder will use on drives.";
+			String folder = JOptionPane.showInputDialog(null, header, "Folder Name", 
+				JOptionPane.QUESTION_MESSAGE, null, null, "Dove");
+			if(folder != null){
+				folderName = folder;
+			}else{
+				folderName = "Dove";
+			}
+			//TODO test and finish!!
 			
 			//GrepExcludes Dialog
 			header = "Will the drives listed in 'skippedDrives' be skipped?\nDefault is yes.";
@@ -195,7 +208,7 @@ public class ConfigWizard {
 				+File.separator+".dove"+File.separator +"config.cfg");
 		boolean hasConfig = config.exists() && config.canRead();
 		//
-		String cfgMountLoc ="", cfgContentLoc ="";
+		String cfgMountLoc ="", cfgContentLoc ="", folderName ="";
 		boolean cfgGrepEx =false, cfgNoThumbs =false, cfgSearchFiles=false;
 		if(hasConfig){
 			try{
@@ -205,6 +218,7 @@ public class ConfigWizard {
 			}
 			cfgMountLoc = configProps.getProperty("mountLocation");
 			cfgContentLoc = configProps.getProperty("contentLocation");
+			cfgFolderName = configProps.getProperty("folderName");
 			cfgGrepEx = Boolean.parseBoolean(configProps.getProperty("grepExcludes") );
 			cfgNoThumbs = Boolean.parseBoolean(configProps.getProperty("allowNoThumbContent") );
 			cfgSearchFiles = Boolean.parseBoolean(configProps.getProperty("searchFileNames") );
@@ -224,6 +238,11 @@ public class ConfigWizard {
 					"ex. /home/user/Content\n> " +
 					(hasConfig ? "From config file: \n" + cfgContentLoc : "") +"\n> " );
 			contentLoc = key.nextLine();
+			
+			System.out.print("Please enter the name that the folder will use on drives. " +
+					"ex. Vacation or SeaLab"; +
+					(hasConfig ? "From config file: \n" cfgFolderName : "" + "\n> ");
+			folderName = key.nextLine();
 			
 			System.out.print("Please enter [true|false] if drives listed in config will not be used.\n"+
 					(hasConfig ? "From config file: \n" + cfgGrepEx : "") +"\n> ");
