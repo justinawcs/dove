@@ -17,8 +17,8 @@ import java.util.Properties;
  	--tui and gui for config.cfg file
  	--look for config files in home directory, System.getProperty("user.home");
  	--move dove.txt info into header of html file for fewer files.
- 	--how can program ask for root/admin->> wrap loaders in shell script that 
- 		call gksudo
+ 	--how can program ask for root/admin->> 
+ 	wrap loaders in shell script that calls gksudo
  	--search-no popup, takeover center stage
  	--ContentItem arraylist of filenames
  	in full kiosk preload thumbs for speed over memory, eventually

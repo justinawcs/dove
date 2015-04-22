@@ -183,10 +183,11 @@ public class DoveGUI extends JFrame{
 		String h = "<html>Choose your storage device.</html>";
 		lStatus.setText(h);
 		JPanel drv = new JPanel();
-			int len = main.getDevices().getInfoArray().length;
-			drv.setLayout(new GridLayout(len,1,10,10));
+			int driveCount = main.getDevices().getInfoArray().length;
+			 
+			drv.setLayout(new GridLayout(4,1,10,10));
 			drv.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-			for(int i=0; i < len; i++){
+			for(int i=0; i < driveCount; i++){
 				String name = main.getDevices().getInfoArray()[i];
 				JButton num;
 				if(main.getDevices().getMountedIndex() == i){
@@ -1467,17 +1468,18 @@ public class DoveGUI extends JFrame{
 	}
 	private class DriveMountListener implements ActionListener{
 		public void actionPerformed(ActionEvent e){
-			int num = Integer.parseInt(e.getActionCommand() );
+			int index = Integer.parseInt(e.getActionCommand() );
 			JButton drv = ((JButton) e.getSource());
 			//default unmount
 			if(main.getDevices().isMounted()){
 				main.getDevices().unmount();
+				System.out.println("Unmounted: "+
+				main.getDevices().getMountedDrive());
 			}
-				System.out.print("unmount");
 				//drv.setSelected(true);
 			//drv.setSelected(false);
-			main.getDevices().mount(num);
-			drv.setText(main.getDevices().getInfoArray()[num]+
+			main.getDevices().mount(index);
+			drv.setText(main.getDevices().getInfoArray()[index]+
 					"\n--Now Mounted--");
 			updateBars();
 			cardPanel.remove(driveCard);

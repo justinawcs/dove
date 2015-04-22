@@ -41,7 +41,8 @@ public class Devices {
 			System.out.println("Error Message:  " + e.getMessage() + "\n");
 		}
 		java.io.InputStream is = p.getInputStream();
-		java.io.BufferedReader reader = new java.io.BufferedReader(new InputStreamReader(is));
+		java.io.BufferedReader reader = new java.io.BufferedReader(
+				new InputStreamReader(is));
 		String s = null;
 		ArrayList<String> data = new ArrayList<String>(); 
 		while ((s = reader.readLine()) != null) {
@@ -75,11 +76,13 @@ public class Devices {
 		devs = new DeviceItem[blkidData.length];
 		
 		for(int i=0; i<blkidData.length; i++){
-			StringTokenizer tok = new StringTokenizer(blkidData[i].trim(), " :", false );
+			StringTokenizer tok = new StringTokenizer(blkidData[i].trim(), 
+					" :", false );
 			// need /dev/BLAH, LABEL=BLAH
 			while(tok.hasMoreTokens() ){
 				String temp = tok.nextToken();
-				while(temp.contains("\"") && temp.indexOf('"') == temp.lastIndexOf('"')){
+				while(temp.contains("\"") && temp.indexOf('"') == 
+						temp.lastIndexOf('"')){
 					temp = temp +" "+ tok.nextToken();
 				}
 				if(temp.startsWith("/dev/") ){
@@ -94,7 +97,8 @@ public class Devices {
 			}
 		}
 		for(int i=0; i<fdiskData.length; i++){
-			StringTokenizer tok = new StringTokenizer(fdiskData[i].substring(5), ":,", false );
+			StringTokenizer tok = new StringTokenizer(fdiskData[i].substring(5),
+					":,", false );
 			String dev = tok.nextToken().trim();
 			String sz = tok.nextToken().trim();
 			for(int j=0; j<location.length; j++){
@@ -113,19 +117,23 @@ public class Devices {
 		if(devs[index].isPermanent == false){
 			try{
 				execBash("mkdir " + mountLocation);
-				String com = "mount " + devs[index].getLocation() +" "+ mountLocation;
+				String com = "mount " + devs[index].getLocation() +" "+ 
+				mountLocation;
 				Process p = Runtime.getRuntime().exec(new String[] {
 					"bash", "-c",  com});
 				try{
 					p.waitFor();
 				}catch(Exception e){
-					System.out.println("Error Message:  " + e.getMessage() + "\n");
+					System.out.println("Error Message:  " + e.getMessage() + 
+							"\n");
 				}
-				//Check exit value of mount command and check if mountlocation can be written to
+				//Check exit value of mount command 
+				//and if mountlocation can be written to
 				if(p.exitValue() != 0 || !new File(mountLocation).canWrite() ){
 					System.out.println("Mount exit value: "+ p.exitValue());
 					java.io.InputStream is = p.getErrorStream();
-					java.io.BufferedReader reader = new java.io.BufferedReader(new InputStreamReader(is));
+					java.io.BufferedReader reader = new java.io.BufferedReader(
+							new InputStreamReader(is));
 					String s = null;
 					//ArrayList<String> data = new ArrayList<String>(); 
 					while ((s = reader.readLine()) != null) {
@@ -238,10 +246,8 @@ public class Devices {
 	public static void main(String[] args){
 		
 	}
-	/**
-	 * @author jaw
-	 *
-	 */
+
+	
 	private class DeviceItem{
 		private String location;
 		private String label;
