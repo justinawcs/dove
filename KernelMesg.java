@@ -18,7 +18,7 @@ public class KernelMesg {
 		try {
 			temp = execBash();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			// Catch file errors
 			System.out.println("Command error:");
 			e.printStackTrace();
 		}
@@ -109,7 +109,7 @@ public class KernelMesg {
 		/*try {
 			execBash();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			// Catch File errors
 			e.printStackTrace();
 		}*/
 		Scanner key = new Scanner(System.in);

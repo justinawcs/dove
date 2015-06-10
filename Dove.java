@@ -44,7 +44,10 @@ import java.util.Properties;
  	ask reddit for project name
  	check to see if filesizes can fit on filesystem and disable files that 
  		cannot
- 	add config to set name of Dove folder on dest. drive
+ 	--add config to set name of Dove folder on dest. drive
+ 	ability to change settings from inside program and restart
+ 	content origin = folder name
+ 	
  */
 
 public class Dove {

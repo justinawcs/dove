@@ -53,8 +53,9 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
 		add(panel);
 		buildMenubar();
 		isConfigLoaded = loadDefaults();
-		setVisible(true);
 		pack();
+		setLocationRelativeTo(null);
+		setVisible(true);
 	}
 	
 	private boolean loadDefaults(){
@@ -66,9 +67,9 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
 			try{
 				defaults.load(new FileInputStream(infoFile));
 				tOrigin.setText(defaults.getProperty("origin"));
+				cFolder.setSelected(Boolean.parseBoolean(defaults.getProperty("makeFolder", "false")));
 				tOutput.setText(defaults.getProperty("outputPath"));
 				outputDest=defaults.getProperty("outputPath");
-				cFolder.setSelected(Boolean.parseBoolean(defaults.getProperty("makeFolder", "false")));
 				tDesc.setText(defaults.getProperty("description"));
 				return true;
 			}catch(IOException io){
@@ -442,6 +443,15 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
 		tThumbStats.setText(str+",  File Size: "+ len);
 	}
 	
+	private String addFileSeparator(String in){
+		in += File.separator;
+		String compare = File.separator + File.separator;
+		if(in.lastIndexOf(compare) > 0){
+			return in.substring(0, in.length() -2 );
+		}else{
+			return in;
+		}
+	}
 	private class NameFocusListener implements FocusListener{
 		@Override
 		public void focusGained(FocusEvent arg0) {}
@@ -475,8 +485,9 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
 			int n = loc.showSaveDialog(null);
 			if(n == JFileChooser.APPROVE_OPTION){
 				outputDest = loc.getSelectedFile().getAbsolutePath();
-				tOutput.setText(outputDest + File.separator 
-						+ (cFolder.isSelected() ? tName.getText() :"" ) );
+				//outputDest = addFileSeparator(outputDest);
+				tOutput.setText(outputDest 	+ (cFolder.isSelected() ? 
+								File.separator + tName.getText() : "" ) );
 			}else if(n == JFileChooser.CANCEL_OPTION) {
 				// Do nothing, the window auto-closes.
 			}
