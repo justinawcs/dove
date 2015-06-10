@@ -247,6 +247,7 @@ public class ConfigWizard {
 	public static void textInterface(){
 		String mountLoc = "", contentLoc = "", folderName = "";
 		boolean grepEx =false, noThumbs= false, searchFileNames= false;
+		//example config file
 		/* #Sat Nov 30 12:08:33 EST 2013
 		mountLocation=/media/Dove
 		contentLocation=/home/jaw/bin/Dove/content2
@@ -277,48 +278,146 @@ public class ConfigWizard {
 			cfgSearchFiles = Boolean.parseBoolean(configProps.getProperty("searchFileNames") );
 			System.out.println("[ConfigWizard] Config file successfully loaded: "+ config.getAbsolutePath().toString());
 		}
-		boolean exit = false;
-		//String input;
+		boolean exit = false, check = false;
+		String input;
 		Scanner key = new Scanner(System.in);
 		while(!exit){
-			//TODO needs inner loop to check all entries
-			System.out.print("Dove Configuration Wizard\n" +
-					"Please enter location to mount devices. ex. /media/Dove\n" +
-					(hasConfig ? "From config file: \t" + cfgMountLoc :"" ) +"\n> ");
+			//inner loops used to check all entries
+			System.out.print("Dove Configuration Wizard\n"
+					+"PROTIP: Type . to keep current configuration."
+					+"Please enter location to mount devices. ex. /media/Dove\n"
+					+(hasConfig ? "From config file: \t" + cfgMountLoc :"" ) 
+					+"\n> ");
 			mountLoc = key.nextLine();
+			if(mountLoc.equals(".")){
+				mountLoc = cfgMountLoc;
+			}
+			while(!new File(mountLoc).exists()){
+				System.out.print("Err: Location not found. Please try again." 
+						+"\n> ");
+				mountLoc = key.nextLine();
+			}
 			
 			System.out.print("Please enter location where content folders will be. " +
 					"ex. /home/user/Content\n" +
 					(hasConfig ? "From config file: \t" + cfgContentLoc : "") +"\n> " );
 			contentLoc = key.nextLine();
+			if(contentLoc.equals(".")){
+				contentLoc = cfgContentLoc;
+			}
+			while(!new File(contentLoc).exists()){
+				System.out.print("Err: Location not found. Please try again." 
+						+"\n> ");
+				contentLoc = key.nextLine();
+			}
 			
 			System.out.print("Please enter the name that the folder will use on drives. " +
 					"ex. Vacation or SeaLab\n" +
 					(hasConfig ? "From config file: \t" + cfgFolderName : "" )+ "\n> ");
 			folderName = key.nextLine();
+			if(folderName.equals(".")){
+				folderName = cfgFolderName;
+			}
+			while(folderName.isEmpty()){
+				System.out.print("Err: Name cannot be empty. Please try again." 
+						+"\n> ");
+			}
 			
 			System.out.print("Please enter [true|false] if drives listed in config will not be used.\n"+
 					(hasConfig ? "From config file: \t" + cfgGrepEx : "") +"\n> ");
-			grepEx = key.nextBoolean();
+			input = key.nextLine();
+			check = false;
+			if(input.equals(".")){
+				grepEx = cfgGrepEx;
+				check = true;
+			}
+			while(!check){
+				if(input.trim().equalsIgnoreCase("true") || 
+					input.trim().equalsIgnoreCase("t")){
+					grepEx = true;
+					check = true;
+				}else if(input.trim().equalsIgnoreCase("false") || 
+					input.trim().equalsIgnoreCase("f")){
+					grepEx = false;
+					check = true;
+				}else{
+					System.out.print("Err: 'T' or 'F'. Please try again." 
+							+"\n> ");
+				}
+			}
 			
 			System.out.print("Please enter [true|false] if content with no thumbnail images will be allowed.\n"+
 					(hasConfig ? "From config file: \t" + cfgNoThumbs : "") +"\n> ");
-			noThumbs = key.nextBoolean();
+			input = key.nextLine();
+			check = false;
+			if(input.equals(".")){
+				noThumbs = cfgNoThumbs;
+				check = true;
+			}
+			while(!check){
+				if(input.trim().equalsIgnoreCase("true") || 
+					input.trim().equalsIgnoreCase("t")){
+					noThumbs = true;
+					check = true;
+				}else if(input.trim().equalsIgnoreCase("false") || 
+					input.trim().equalsIgnoreCase("f")){
+					noThumbs = false;
+					check = true;
+				}else{
+					System.out.print("Err: 'T' or 'F'. Please try again." 
+							+"\n> ");
+				}
+			}
 			
 			System.out.print("Please enter [true|false] if filenames will be searched.\n"+
 					(hasConfig ? "From config file: \t" + cfgSearchFiles : "") +"\n> ");
-			searchFileNames = key.nextBoolean();
+			input = key.nextLine();
+			check = false;
+			if(input.equals(".")){
+				searchFileNames = cfgSearchFiles;
+				check = true;
+			}
+			while(!check){
+				if(input.trim().equalsIgnoreCase("true") || 
+					input.trim().equalsIgnoreCase("t")){
+					searchFileNames = true;
+					check = true;
+				}else if(input.trim().equalsIgnoreCase("false") || 
+					input.trim().equalsIgnoreCase("f")){
+					searchFileNames = false;
+					check = true;
+				}else{
+					System.out.print("Err: 'T' or 'F'. Please try again." 
+							+"\n> ");
+				}
+			}
 			
-			System.out.println("Mount Location: " + mountLoc +
+			System.out.println("Finished, please check entries:" +
+							"\nMount Location: " + mountLoc +
 							"\nContent Location: " + contentLoc +
 							"\nFolder Name: " + folderName +
 							"\nGrepExcludes: " + grepEx +
 							"\nNoThumbs: " + noThumbs +
 							"\nSearchFileNames: " + searchFileNames );	
 			System.out.print("Is the information above correct? [true|false]\n> ");
-			exit = key.nextBoolean();
+			input = key.nextLine();
+			check = false;
+			while(!check){
+				if(input.trim().equalsIgnoreCase("true") || 
+					input.trim().equalsIgnoreCase("t")){
+					exit = true;
+					check = true;
+				}else if(input.trim().equalsIgnoreCase("false") || 
+					input.trim().equalsIgnoreCase("f")){
+					exit = false;
+					check = true;
+				}else{
+					System.out.print("Err: 'T' or 'F'. Please try again." 
+							+"\n> ");
+				}
+			}
 			
-		}
+		}//end input loop
 		try{
 			FileOutputStream output = new FileOutputStream(config);
 			configProps.setProperty("mountLocation", mountLoc);

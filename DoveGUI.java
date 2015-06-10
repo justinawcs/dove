@@ -254,7 +254,6 @@ public class DoveGUI extends JFrame{
  */
 	
 	public void makeSidebar(){
-		//TODO simplify tags search: tags any/all, add has thumbnail 
 		sidebar = new Box(BoxLayout.PAGE_AXIS);
 		sidebar.setBorder(BorderFactory.createEmptyBorder(0,10,0,10) );
 		//lSearch = new JLabel("Search:");
