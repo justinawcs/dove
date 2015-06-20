@@ -8,7 +8,8 @@ See Dove.java for TODO list
 * [https://ideone.com/](https://ideone.com/)
 * [https://c9.io/](https://c9.io/) Gonna try this on first!
 ### Code Help
-* [https://google-styleguide.googlecode.com/svn/trunk/javaguide.html](Google Code Standards)
+* [[Google Code Standards](https://google-styleguide.googlecode.com/svn/trunk/javaguide.html)]
+* [JavaDoc](http://www.oracle.com/technetwork/articles/java/index-137868.html)
 
 
 ### What is this repository for? ###
