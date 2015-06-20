@@ -46,7 +46,7 @@ import java.util.Properties;
  		cannot
  	--add config to set name of Dove folder on dest. drive
  	ability to change settings from inside program and restart
- 	content origin = folder name
+ 	suggest content origin = folder name
  	
  */
 
@@ -67,7 +67,7 @@ public class Dove {
 		 *    if config file not found  
 		 */
 		loadConfigs(); //loads configs, if there its used, if not defaults
-		String mountLoc, grepEx, contentLoc, allowNoThumb, searchFileNames;
+		String mountLoc, grepEx, contentLoc, folderName, allowNoThumb, searchFileNames;
 		mountLoc = config.getProperty("mountLocation", "/media/Dove");
 		grepEx = config.getProperty("grepExcludes", "false");
 		if(Boolean.parseBoolean(grepEx) == true){
@@ -77,11 +77,13 @@ public class Dove {
 			grepEx = "";
 		}
 		contentLoc = config.getProperty("contentLocation","/home/");
+		folderName = config.getProperty("folderName", "Dove");
 		allowNoThumb = config.getProperty("allowNoThumbContent", "true");
 		searchFileNames = config.getProperty("searchFileNames", "false");
 		src = new Content(contentLoc, Boolean.parseBoolean(allowNoThumb));
 		src.setSearchFileNames(Boolean.parseBoolean(searchFileNames));
-		devs = new Devices(mountLoc, grepEx);
+		devs = new Devices(mountLoc, grepEx, folderName);
+		
 		//System.out.println("[Dove] "+Configs.toString());
 	}
 
