@@ -2,14 +2,14 @@
 
 This README would normally document whatever steps are necessary to get your application up and running.
 ## TODO List
-    Relief Kiosk
+    Relief Kiosk, or pick new name
     --DoveCLI
   	--InfoMakerCLI
  	--drive Skipper class
  	--thumbnail only button
  	--file list on GUI
  	--'df -h' to get partition size estimates? --> df only reads mounted fs, 
- 		wont work.
+ 	 --wont work.
  	--config and info config setters -> Wizards
  	--tui and gui for config.cfg file
  	--look for config files in home directory, System.getProperty("user.home");
@@ -25,7 +25,7 @@ This README would normally document whatever steps are necessary to get your app
  	--thumb compression-better
  	--infomaker editing, better/smoother Change Listener- called on everychagne
  	 	to keep everything updated?
- 	wizard need explainations in main window
+ 	ConfigWizard need explainations in main window
  	--fix tags search
  	--thumbsnails only button
  	--XXrestrict sort type to after type is chosen only, when clear go default
@@ -44,8 +44,14 @@ This README would normally document whatever steps are necessary to get your app
  	--add config to set name of Dove folder on dest. drive
  	ability to change settings from inside program and restart
  	suggest content origin = folder name
+ 	add License or copyright information, if present
+ 	Fix wildcard input statements, line wrap ok
+ 	logically order methods/members,
+ 	order overloaded methods, never split
+ 	convert tabs to two spaces indents
+ 	break lines before symbols
+ 	
 
-See Dove.java for TODO list
 ### Online IDEs
 * [http://www.compilejava.net/](http://www.compilejava.net/)
 * [https://ideone.com/](https://ideone.com/)
