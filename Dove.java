@@ -5,50 +5,7 @@ import java.util.Properties;
 
 	//TODO consider which things to implement for initial launch, 
 		//work on those items
-/*  Relief Kiosk
- *  --DoveCLI
- * 	--InfoMakerCLI
- 	--drive Skipper class
- 	--thumbnail only button
- 	--file list on GUI
- 	--'df -h' to get partition size estimates? --> df only reads mounted fs, 
- 		wont work.
- 	--config and info config setters -> Wizards
- 	--tui and gui for config.cfg file
- 	--look for config files in home directory, System.getProperty("user.home");
- 	--move dove.txt info into header of html file for fewer files.
- 	--how can program ask for root/admin->> 
- 	wrap loaders in shell script that calls gksudo
- 	--search-no popup, takeover center stage
- 	--ContentItem arraylist of filenames
- 	in full kiosk preload thumbs for speed over memory, eventually
- 	--splash page on DoveGUI with loading bar, need RS
- 	>>code to listen for storage devices, esp. removed before unmount
- 	--list page needs undo button
- 	--thumb compression-better
- 	--infomaker editing, better/smoother Change Listener- called on everychagne
- 	 	to keep everything updated?
- 	wizard need explainations in main window
- 	--fix tags search
- 	--thumbsnails only button
- 	--XXrestrict sort type to after type is chosen only, when clear go default
- 	--infomakergui overwirtes?
- 	--XXadd sort best type
- 	--align thumbnails plz
- 	Copy Progress Bar
- 	help/about panels
- 	DoveKiosk breadcrumbs at top
- 	-- bash code-better make class->> nope just use standard better
- 	Documentation and information
- 	prelim website
- 	ask reddit for project name
- 	check to see if filesizes can fit on filesystem and disable files that 
- 		cannot
- 	--add config to set name of Dove folder on dest. drive
- 	ability to change settings from inside program and restart
- 	suggest content origin = folder name
- 	
- */
+
 
 public class Dove {
 	private Content src;
