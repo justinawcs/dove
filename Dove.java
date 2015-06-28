@@ -3,10 +3,10 @@ import java.nio.file.*;
 import java.util.Properties;
 //import java.util.ArrayList;
 
-	//TODO consider which things to implement for initial launch, 
-		//work on those items
-
-
+/**
+ * Main Kiosk class. Handles configuration, main copy function, and object links.
+ * 
+ */
 public class Dove {
 	private Content src;
 	//private Drive  drv;
@@ -16,13 +16,13 @@ public class Dove {
 	private final String configLocation = System.getProperty("user.home")
 			+File.separator+".dove"+File.separator;
 
+	/**
+	 * Starts configuration from either config file or defaults listed below.
+	 * example: mountLoc = config.getProperty("mountLocation", "/media/Dove");
+	 *   pulls the data from the config file, but defaults to "/media/Dove"
+	 *   if config file not found.
+	 */
 	public Dove(){
-		/*
-		 * Defaults are generated here:
-		 * ex: mountLoc = config.getProperty("mountLocation", "/media/Dove");
-		 *   pulls the data from the config file, but defaults to "/media/Dove"
-		 *    if config file not found  
-		 */
 		loadConfigs(); //loads configs, if there its used, if not defaults
 		String mountLoc, grepEx, contentLoc, folderName, allowNoThumb, searchFileNames;
 		mountLoc = config.getProperty("mountLocation", "/media/Dove");
@@ -40,10 +40,11 @@ public class Dove {
 		src = new Content(contentLoc, Boolean.parseBoolean(allowNoThumb));
 		src.setSearchFileNames(Boolean.parseBoolean(searchFileNames));
 		devs = new Devices(mountLoc, grepEx, folderName);
-		
 		//System.out.println("[Dove] "+Configs.toString());
 	}
-
+	/**
+	 *
+	 */
 	private boolean loadConfigs(){
 		try{
 			config.load(new FileInputStream(configLocation +File.separator +
