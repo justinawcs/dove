@@ -1,8 +1,11 @@
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.File;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import java.io.InputStream;
 
 
 public class Devices {
@@ -11,14 +14,16 @@ public class Devices {
 	//private final static String DMESG_CMD = "dmesg | grep 'usb-storage'";
 	private String mountLocation;
 	private String grepExcludes;
+	private String folderName;
 	private Integer mounted;
 	private DeviceItem[] devs;
 	private Drive drv;
 
 	
-	public Devices(String mountLoc, String grepEx){
+	public Devices(String mountLoc, String grepEx, String name){
 		mountLocation = mountLoc;
 		grepExcludes = grepEx;
+		folderName = name;
 		mounted = null;
 		try{
 			refresh();
@@ -40,14 +45,14 @@ public class Devices {
 		}catch(Exception e){
 			System.out.println("Error Message:  " + e.getMessage() + "\n");
 		}
-		java.io.InputStream is = p.getInputStream();
-		java.io.BufferedReader reader = new java.io.BufferedReader(
+		InputStream is = p.getInputStream();
+		BufferedReader reader = new BufferedReader(
 				new InputStreamReader(is));
 		String s = null;
 		ArrayList<String> data = new ArrayList<String>(); 
 		while ((s = reader.readLine()) != null) {
 			data.add(s);
-			//System.out.println("[Devices.execBash] "+s);
+			System.out.println("[Devices.execBash] "+s);
 		}
 		//System.out.println("[Devices.execBash] "+ data.size() + " items.");
 		String[] out = new String[data.size()] ;
@@ -57,7 +62,54 @@ public class Devices {
 		return out;
 	}
 	
+	private static int execBashVerbose(String com) throws IOException{
+		System.out.println(com);
+		Process p = Runtime.getRuntime().exec(new String[] {
+				//example: "bash", "-c", "/home/jaw/bin/java/Dove/DriveInfo.sh"
+				"bash", "-c", com });
+		try{
+			p.waitFor();
+			System.out.println("Exit Value: "+p.exitValue());
+			System.out.println("Output:\n:"+ streamReader(p.getInputStream())); 
+			System.out.println("Errors:\n"+ streamReader(p.getErrorStream()));
+		}catch(Exception e){
+			System.out.println("Error Message:  " + e.getMessage() + "\n");
+		}
+		InputStream is = p.getInputStream();
+		BufferedReader reader = new BufferedReader(
+				new InputStreamReader(is));
+		String s = null;
+		ArrayList<String> data = new ArrayList<String>(); 
+		while ((s = reader.readLine()) != null) {
+			data.add(s);
+			System.out.println("[Devices.execBash] "+s);
+		}
+		//System.out.println("[Devices.execBash] "+ data.size() + " items.");
+		String[] out = new String[data.size()] ;
+		for(int i=0; i<data.size(); i++ ){
+			out[i] = data.get(i);
+		}
+		return p.exitValue();
+	}
+	
+	private static String streamReader(InputStream in) {
+		InputStreamReader inReader = new InputStreamReader(in);
+		BufferedReader bufferedReader = new BufferedReader(inReader);
+        String hold ="";
+        try{
+			String line = bufferedReader.readLine();
+	        while(line != null){
+	            hold = hold + line+ "\n";
+	            line = bufferedReader.readLine();
+	        }
+        }catch (IOException io){
+        	io.printStackTrace();
+        }
+		return hold;
+	}
+	
 	public void refresh() throws IOException{
+		//TODO Disable permanent devices or implement
 		// run commands and pipe output to Devices(blkid,fdisk) 
 		//blkid -c /dev/null | grep -v -e '/dev/sda' -e '/dev/sdb'
 		//fdisk -l | grep 'Disk /' | grep -v -e '/dev/sda' -e '/dev/sdb'
@@ -114,11 +166,16 @@ public class Devices {
 	}
 	public boolean mount(int index){
 		//mount command
+		if(isMounted()){
+			unmount();
+		}
 		if(devs[index].isPermanent == false){
 			try{
 				execBash("mkdir " + mountLocation);
 				String com = "mount " + devs[index].getLocation() +" "+ 
 				mountLocation;
+				execBashVerbose(com);
+				/*
 				Process p = Runtime.getRuntime().exec(new String[] {
 					"bash", "-c",  com});
 				try{
@@ -141,25 +198,32 @@ public class Devices {
 					}
 					return false;
 				}
+				*/
 				
 			}catch(IOException io){
 				System.out.println(io.getMessage() );
 			}
-			drv = new Drive(mountLocation);
+		drv = new Drive(mountLocation, folderName);
+		System.out.println("[Devices.mount.success] "+drv.toString());
 		}else {//devs[index].isPermanent == true
 			//dont try to mount, its already there, just point
-			drv = new Drive(devs[index].getLocation() );
+			drv = new Drive(devs[index].getLocation(), folderName );
 		}
 		mounted = index;
 		return true;
 	}
+	
+	//TODO decide unmount all on launch??
 	public boolean unmount(){
 		//unmount mounted drive
 		if(getMounted().isPermanent() == false){
 			//System.out.println("Permanent Mount");
 			try{
-				execBash("umount "+ getMounted().getLocation() );
+				System.out.println("[Devices.unmount] "
+					+getMounted().getLocation());
+				execBashVerbose("umount "+ getMounted().getLocation() );
 			}catch(IOException io){
+				io.printStackTrace();
 				System.out.println(io.getMessage() );
 			}
 		}else{ // getMounted.isPermanent == true

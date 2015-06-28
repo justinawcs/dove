@@ -2,12 +2,14 @@ import java.io.*;
 
 public class Drive {
 	private File drv;
+	private String folderName;
 	private long totalSpace;
 	private long freeSpace; // Usable space
 	private boolean isSetup;
 	
-	public Drive(String s){
-		drv = new File(s);
+	public Drive(String path, String name){
+		drv = new File(path);
+		folderName =  name;
 		totalSpace = drv.getTotalSpace();
 		freeSpace = drv.getUsableSpace();
 		checkSetup();
@@ -20,7 +22,7 @@ public class Drive {
 	}
 	
 	public void checkSetup(){
-		checkSetup("Dove");
+		checkSetup(folderName);
 	}
 	public void checkSetup(String name){
 		boolean check = false;
@@ -41,7 +43,8 @@ public class Drive {
 			}else{// Just looping through.
 			}
 			/*else if(drv.listFiles()[i].isDirectory()){
-			//Folder name is Not "DOVE" or given then look for renamed folder in device root
+			//Folder name is Not "DOVE" or given then look for renamed 
+			 * folder in device root
 				File[] folder = drv.listFiles()[i].listFiles();
 				for(File f: folder){
 					if(f.isFile() && f.getName().equals(doveDat) ){
@@ -61,7 +64,7 @@ public class Drive {
 	
 	public void setupDrive(){
 		// Place Dove/ into base of drive
-		new File(drv.toString() + File.separator + "Dove").mkdir();
+		new File(drv.toString() + File.separator + folderName).mkdir();
 		//upload preset content if required
 		isSetup = true;
 	}
@@ -98,7 +101,8 @@ public class Drive {
 		return drv;
 	}
 	public File getDoveFile(){
-		File temp = new File(drv.getAbsolutePath() + File.separator + "Dove");
+		File temp = new File(drv.getAbsolutePath() + File.separator 
+				+ folderName);
 		return temp;
 	}
 	

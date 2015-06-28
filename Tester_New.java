@@ -120,14 +120,20 @@ public class Tester_New {
 		//Configs.getMountLoc() ;
 		//Configs.getGrepExcludes() ;
 		
-		//string test
-		String holder = "[10049.551966] scsi 10:0:0:0: Direct-Access              USB 2.0          1.0  PQ: 0 ANSI: 2";
-		System.out.println(holder);
-		int a = holder.indexOf("[");
-		int b = holder.indexOf("]");
-		System.out.println(a +" "+ b);
-		holder = holder.substring(a ,b+1 );
-		System.out.println(holder);
-		//lastTime = holder;
+//		//string test
+//		String holder = "[10049.551966] scsi 10:0:0:0: Direct-Access              USB 2.0          1.0  PQ: 0 ANSI: 2";
+//		System.out.println(holder);
+//		int a = holder.indexOf("[");
+//		int b = holder.indexOf("]");
+//		System.out.println(a +" "+ b);
+//		holder = holder.substring(a ,b+1 );
+//		System.out.println(holder);
+//		//lastTime = holder;
+		
+		//TEST Devcies
+		Dove one = new Dove();
+		one.getDevices().toString();
+		one.getDevices();
+		
 	}
 }
