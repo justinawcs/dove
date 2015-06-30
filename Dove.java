@@ -4,7 +4,7 @@ import java.util.Properties;
 //import java.util.ArrayList;
 
 /**
- * Main Kiosk class. Handles configuration, main copy function, and object links.
+ * Main class. Handles configuration, main copy function, and object links.
  * 
  */
 public class Dove {
@@ -13,37 +13,52 @@ public class Dove {
 	private Devices devs;
 	private Properties config = new Properties();
 	private long bytesCopied = 0;
-	private final String configLocation = System.getProperty("user.home")
+	private final String CONFIG_LOCATION = System.getProperty("user.home")
 			+File.separator+".dove"+File.separator;
-
+	//Default values
+	private final String DEF_MOUNT_LOCATION = "/media/Dove";
+	private final String DEF_GREP_EXCLUDES = "false";
+	private final String DEF_CONTENT_LOCATN = "/home/";
+	private final String DEF_FOLDER_NAME = "Dove";
+	private final String DEF_ALLOW_NO_THUMB_CONTENT = "true";
+	private final String DEF_SEARCH_FILE_NAMES = "false";
 	/**
 	 * Starts configuration from either config file or defaults listed below.
 	 * example: mountLoc = config.getProperty("mountLocation", "/media/Dove");
 	 *   pulls the data from the config file, but defaults to "/media/Dove"
 	 *   if config file not found.
+	 * 
 	 */
 	public Dove(){
-		loadConfigs(); //loads configs, if there its used, if not defaults
-		String mountLoc, grepEx, contentLoc, folderName, allowNoThumb, searchFileNames;
-		mountLoc = config.getProperty("mountLocation", "/media/Dove");
-		grepEx = config.getProperty("grepExcludes", "false");
+		Boolean loaded = loadConfigs(); //loads configs, or defaults
+		String mountLoc;
+		String grepEx;
+		String contentLoc;
+		String folderName;
+		String allowNoThumb;
+		String searchFileNames;
+		//Read from config files, or use hard-defaults below
+		mountLoc = config.getProperty("mountLocation", DEF_MOUNT_LOCATION);
+		grepEx = config.getProperty("grepExcludes", DEF_GREP_EXCLUDES);
 		if(Boolean.parseBoolean(grepEx) == true){
 			DriveSkipper ds = new DriveSkipper();
 			grepEx = ds.getExcludeString();
 		}else{
 			grepEx = "";
 		}
-		contentLoc = config.getProperty("contentLocation","/home/");
-		folderName = config.getProperty("folderName", "Dove");
-		allowNoThumb = config.getProperty("allowNoThumbContent", "true");
-		searchFileNames = config.getProperty("searchFileNames", "false");
+		contentLoc = config.getProperty("contentLocation", DEF_CONTENT_LOCATN);
+		folderName = config.getProperty("folderName", DEF_FOLDER_NAME);
+		allowNoThumb = config.getProperty("allowNoThumbContent", 
+			DEF_ALLOW_NO_THUMB_CONTENT);
+		searchFileNames = config.getProperty("searchFileNames", 
+			DEF_SEARCH_FILE_NAMES);
 		src = new Content(contentLoc, Boolean.parseBoolean(allowNoThumb));
 		src.setSearchFileNames(Boolean.parseBoolean(searchFileNames));
 		devs = new Devices(mountLoc, grepEx, folderName);
 		//System.out.println("[Dove] "+Configs.toString());
 	}
 	/**
-	 *
+	 * Calls config into Properties object
 	 */
 	private boolean loadConfigs(){
 		try{
