@@ -78,7 +78,8 @@ public class DoveGUI extends JFrame{
 			// Keep synced w/ SortType sort
 	private final SortType DEFAULT_SORT = SortType.NEW; //Default
 	private SortType sort = DEFAULT_SORT; 
-	private final int BAR_MAX = 10000, PAGE_SIZE = 6;
+	private final int BAR_MAX = 10000;
+	private final int PAGE_SIZE = 6; //TODO add config for rows and columns
 	private ArrayList<ContentItem> list = new ArrayList<ContentItem>(), 
 			undoList;
 	private long listTotalSize = 0, undoSize; 

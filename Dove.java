@@ -13,7 +13,8 @@ public class Dove {
 	private Devices devs;
 	private Properties config = new Properties();
 	private long bytesCopied = 0;
-	private final String configLocation = System.getProperty("user.home")
+	private static int BUFFER_LENGTH = 1024;
+	private static final String configLocation = System.getProperty("user.home")
 			+ File.separator+".dove" + File.separator;
 
 	public Dove(){
@@ -133,7 +134,7 @@ public class Dove {
 			in = new BufferedInputStream(new FileInputStream(src));
 			out = new BufferedOutputStream(new FileOutputStream(tgt));
 			int bit;
-			byte[] buffer = new byte[1024];//TODO move magic# to top-init
+			byte[] buffer = new byte[BUFFER_LENGTH];
 			while((bit = in.read(buffer)) != -1){
 				out.write(buffer, 0, bit);
 				bytesCopied += bit;
