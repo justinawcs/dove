@@ -215,6 +215,11 @@ public class ConfigWizard {
 				done = true;
 				//write to file
 				try{
+					if(!hasConfig){
+						config.createNewFile();
+						config.setWritable(true);
+						config.setReadable(true);
+					}
 					FileOutputStream output = new FileOutputStream(config);
 					configProps.setProperty("mountLocation", mountLoc);
 					configProps.setProperty("contentLocation", contentLoc);
@@ -419,6 +424,11 @@ public class ConfigWizard {
 			
 		}//end input loop
 		try{
+			if(!hasConfig){
+				config.createNewFile();
+				config.setWritable(true);
+				config.setReadable(true);
+			}
 			FileOutputStream output = new FileOutputStream(config);
 			configProps.setProperty("mountLocation", mountLoc);
 			configProps.setProperty("contentLocation", contentLoc);
