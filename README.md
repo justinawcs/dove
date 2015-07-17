@@ -57,8 +57,9 @@ This README would normally document whatever steps are necessary to get your app
 * [https://ideone.com/](https://ideone.com/)
 * [https://c9.io/](https://c9.io/) Good ide, compiles, cant run.
 * [https://codenvy.com/](https://codenvy.com/) Good ide, cant connect to bitbucket.
+** [Possilbe Fix](http://docs.codenvy.com/user/tutorials/)
 ### Code Help
-* [[Google Code Standards](https://google-styleguide.googlecode.com/svn/trunk/javaguide.html)]
+* [Google Code Standards](https://google-styleguide.googlecode.com/svn/trunk/javaguide.html)
 * [JavaDoc](http://www.oracle.com/technetwork/articles/java/index-137868.html)
 
 
