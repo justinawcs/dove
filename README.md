@@ -50,6 +50,11 @@ This README would normally document whatever steps are necessary to get your app
  	order overloaded methods, never split
  	convert tabs to two spaces indents
  	break lines before symbols
+
+###Bookmarks
+* http://stackoverflow.com/questions/13574461/need-to-have-jprogress-bar-to-measure-progress-when-copying-directories-and-file
+* see drive
+* [Copy Estimates](http://stackoverflow.com/questions/1152208/computing-estimated-times-of-file-copies-movements)
  	
 
 ### Online IDEs

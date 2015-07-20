@@ -14,8 +14,9 @@ public class Dove {
   private Devices devs;
   private Properties config = new Properties();
   private long bytesCopied = 0;
+  private static int BUFFER_LENGTH = 1024;
   private static final String CONFIG_LOCATION = System.getProperty("user.home")
-      + File.separator+".dove"+File.separator;
+      + File.separator + ".dove" + File.separator;
   //Default values
   private static final String DEF_MOUNT_LOCATION = "/media/Dove";
   private static final String DEF_GREP_EXCLUDES = "false";
@@ -161,8 +162,8 @@ public class Dove {
    */
   private boolean copyBase(File load) throws IOException{
     //  check for folder name on drive and rename if already there
-    File check = new File(devs.getMountedDrive().getDoveFile().getAbsolutePath()
-        + File.separator + load.getName());
+    File check = new File(devs.getMountedDrive().getDoveFile()
+        .getAbsolutePath() + File.separator + load.getName());
     int i=1;
     while (check.exists()){
       //Folder is already there, pick new folder name 
@@ -172,7 +173,9 @@ public class Dove {
     }
     check.mkdir();
     String temp = check.toString();
-    bytesCopied = load.length(); //set to folderSize before copying
+    //set bytesCopied to initial root before copying,
+    //its already been been recreated/copied 
+    bytesCopied = load.length(); 
     System.out.println("Folder size: " + bytesCopied);
     dive(load, temp);
     return true;
@@ -191,14 +194,40 @@ public class Dove {
       File target = new File(bc + File.separator + 
           files[i].getName());
       target.setWritable(true);
-      Files.copy(files[i].toPath(), target.toPath() );
-      bytesCopied += files[i].length();
+      if(files[i].isDirectory()){
+        Files.copy(files[i].toPath(), target.toPath() );
+        bytesCopied += files[i].length();
+        dive(files[i], bc + File.separator + files[i].getName());
+      }else{
+        chunkCopy(files[i], target);
+      }
       System.out.print(files[i].toPath() + " : " );
       System.out.println(new File(bc + File.separator + 
           files[i].getName()).toPath() +" "+ files[i].length() );
       if(files[i].isDirectory()){
-        dive(files[i], bc + File.separator + files[i].getName());
+        
       }
+    }
+  }//TODO add code to kiosk to chunk update properly.
+  //wont copy folders
+  private void chunkCopy(File src, File tgt) throws IOException {
+    BufferedInputStream in = null;
+    BufferedOutputStream out = null;
+    try{
+      in = new BufferedInputStream(new FileInputStream(src));
+      out = new BufferedOutputStream(new FileOutputStream(tgt));
+      int bit;
+      byte[] buffer = new byte[BUFFER_LENGTH];
+      while((bit = in.read(buffer)) != -1){
+        out.write(buffer, 0, bit);
+        bytesCopied += bit;
+      }
+    }catch (Exception e){
+      e.printStackTrace();
+    }
+    finally{
+      in.close();
+      out.close();
     }
   }
   
