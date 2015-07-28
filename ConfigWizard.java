@@ -216,6 +216,7 @@ public class ConfigWizard {
 				//write to file
 				try{
 					if(!hasConfig){
+						//TODO fix set new file.
 						config.createNewFile();
 						config.setWritable(true);
 						config.setReadable(true);
