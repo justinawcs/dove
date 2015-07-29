@@ -9,8 +9,8 @@ import java.io.IOException;
 import java.util.Date;
 
 public class Tester_Copy {
-	public static void main(String[] args) throws IOException {
-		BufferedInputStream in = null;
+  public static void main(String[] args) throws IOException {
+    BufferedInputStream in = null;
         BufferedOutputStream out = null;
         File src = new File("music.mp3");
         File dest = File.createTempFile("out", ".mp3");
@@ -24,8 +24,8 @@ public class Tester_Copy {
             long progress = 0L;
             long loops = length / 1024;
             System.out.println("Filesize: "+ length + "(" + 
-            		Dove.humanReadableByteCount(length, true) + ")" +
-            		"Predicted number of loops: " + loops);
+                Dove.humanReadableByteCount(length, true) + ")" +
+                "Predicted number of loops: " + loops);
             long loopCount = 0L;
             int c;
             
@@ -48,19 +48,19 @@ public class Tester_Copy {
 //                	"#loops:" + loopCount + 
 //                	" time: " + counter);
                 if(counter >= 50L){
-                	double percent = (progress * 100d / length);
-                	String per = String.format("%5.2f", percent);
-                	String size= Dove.humanReadableByteCount(progress, true);
-                	
-                	long hold = (c * loopCount) ; 
-                	long rate = (long) (hold / (counter/1000d));
-                	float estim =(length - progress) / (float)rate ;
-                	System.out.println(per +"% Size: " + size + 
-                			" Time(s):" + counter / 1000d + " "+
-                			hold +" "+ Dove.humanReadableByteCount(rate, true) +
-                			" "+rate+"  "+ estim  );
-                	loopCount = 0L;
-                	segment = new Date();
+                  double percent = (progress * 100d / length);
+                  String per = String.format("%5.2f", percent);
+                  String size= Dove.humanReadableByteCount(progress, true);
+                  
+                  long hold = (c * loopCount) ; 
+                  long rate = (long) (hold / (counter/1000d));
+                  float estim =(length - progress) / (float)rate ;
+                  System.out.println(per +"% Size: " + size + 
+                      " Time(s):" + counter / 1000d + " "+
+                      hold +" "+ Dove.humanReadableByteCount(rate, true) +
+                      " "+rate+"  "+ estim  );
+                  loopCount = 0L;
+                  segment = new Date();
                 }
                 
                 
@@ -68,7 +68,7 @@ public class Tester_Copy {
             long end = new Date().getTime() - overall.getTime();
             long fin = (long) (length / (end/1000d));
             System.out.println("Complete time: "+ end/1000d + "  AVG speed: "+
-            		Dove.humanReadableByteCount(fin, true ) +"/sec");
+                Dove.humanReadableByteCount(fin, true ) +"/sec");
         } finally {
             if (in != null) {
                 in.close();
@@ -81,10 +81,10 @@ public class Tester_Copy {
         dest.delete();
         /*File[] f =  File.listRoots();
         for(File i : f){
-        	System.out.println(i.toString());
+          System.out.println(i.toString());
         }*/
         
     }
-	
+  
 }
 
