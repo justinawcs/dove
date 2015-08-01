@@ -48,8 +48,9 @@ This README would normally document whatever steps are necessary to get your app
  	Fix wildcard input statements, line wrap ok
  	logically order methods/members,
  	order overloaded methods, never split
- 	convert tabs to two spaces indents
+ 	--convert tabs to two spaces indents
  	break lines before symbols
+ 	Flatten all toString to true one-liners
 
 ###Bookmarks
 * http://stackoverflow.com/questions/13574461/need-to-have-jprogress-bar-to-measure-progress-when-copying-directories-and-file
