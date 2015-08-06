@@ -51,6 +51,7 @@ This README would normally document whatever steps are necessary to get your app
  	--convert tabs to two spaces indents
  	break lines before symbols
  	Flatten all toString to true one-liners
+ 	add logs ability and log levels
 
 ###Bookmarks
 * http://stackoverflow.com/questions/13574461/need-to-have-jprogress-bar-to-measure-progress-when-copying-directories-and-file
