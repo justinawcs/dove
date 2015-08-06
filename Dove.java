@@ -1,12 +1,15 @@
+import java.awt.GraphicsEnvironment;
 import java.io.*;
 import java.nio.file.*;
 import java.util.Properties;
 import java.util.Scanner;
 //import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 /**
  * Main class. Handles configuration, main copy function, and inner objects.
- * @author Justin Williams
+ * @author Justin A. Williams
  * @version 0.0.8
  */
 public class Dove {
@@ -20,7 +23,8 @@ public class Dove {
   //Default values
   private static final String DEF_MOUNT_LOCATION = "/media/Dove";
   private static final String DEF_GREP_EXCLUDES = "false";
-  private static final String DEF_CONTENT_LOCATN = "/home/";
+  private static final String DEF_CONTENT_LOCATN = 
+      System.getProperty("user.home") + File.separator + "Dove";
   private static final String DEF_FOLDER_NAME = "Dove";
   private static final String DEF_ALLOW_NO_THUMB_CONTENT = "true";
   private static final String DEF_SEARCH_FILE_NAMES = "false";
@@ -49,6 +53,7 @@ public class Dove {
       grepEx = "";
     }
     contentLoc = config.getProperty("contentLocation", DEF_CONTENT_LOCATN);
+    new File(contentLoc).mkdirs(); //Force creation of folder if not present
     folderName = config.getProperty("folderName", DEF_FOLDER_NAME);
     allowNoThumb = config.getProperty("allowNoThumbContent", 
         DEF_ALLOW_NO_THUMB_CONTENT);
@@ -68,16 +73,17 @@ public class Dove {
    */
   private boolean loadConfigs(){
     try{
-      config.load(new FileInputStream(configLocation + File.separator
-          + "config.cfg"));
-      System.out.println("[Dove] Config file successfully loaded: "
-          + config.toString()
-          + "\n" + configLocation);
+      config.load(new FileInputStream(CONFIG_LOCATION + File.separator +
+          "config.cfg"));
+      System.out.println("[Dove] Config file successfully loaded: " +
+          config.toString() + 
+          "\n" + CONFIG_LOCATION);
       return true;
     }catch(IOException io){
-      System.out.println("[Dove] config.cfg - Not Found!"+configLocation);
+      System.out.println("[Dove] config.cfg - Not Found! " + CONFIG_LOCATION);
       //io.printStackTrace();
-      //TODO add throw user notification
+      // add throw user notification
+      noConfigNotify();
       
       return false;
     }
@@ -88,27 +94,24 @@ public class Dove {
    * Suggests the termination of this program and running of ConfigWizard. 
    */
   private void noConfigNotify(){
-    //TODO fix, rough implementation 
+    //TODO move GUI section to DoveDUI after DoveGUI extends Dove
     final String WARN = "WARNING:  No configuration file found for Dove. "
       + "\nThis program will likely not work as intended without " 
       + "proper configuration. Please run ConfigWizard to setup Dove.";
-    if(GraphicsEnvironment.isHeadless(){
+    if(GraphicsEnvironment.isHeadless()){
       //there is no GUI, text based warning and option.
       Scanner key = new Scanner(System.in);
       String ans;
       System.out.println(WARN + "\nPress q to quit, or press enter to " +
           "acknowledge and continue.");
-      ans = key.nextChar();
-      if(ans.isEqualIgnoreCase("q"){
-        System.exit();
+      ans = key.nextLine();
+      if(ans.startsWith("q")){
+        System.exit(0);
       }
     }else{
       //GUI present use JOptionPane to warn user, then continue
-      int opt = JOptionPane.showMessageDialog(null, WARN, "Configuration", 
+      JOptionPane.showMessageDialog(null, WARN, "Configuration", 
       JOptionPane.WARNING_MESSAGE, null);
-      if(opt == JOptionPane.Exit){
-        System.exit();
-      }
       //hit ok continues, exit closes program
     }
   }
@@ -190,15 +193,14 @@ public class Dove {
    */
   private void dive(File f, String bc) throws IOException{
     File files[] = f.listFiles();
-    for(int i=0;i<files.length;i++){
-      File target = new File(bc + File.separator + 
-          files[i].getName());
+    for(int i=0; i<files.length; i++){
+      File target = new File(bc + File.separator + files[i].getName() );
       target.setWritable(true);
-      if(files[i].isDirectory()){
+      if(files[i].isDirectory() ){ // Folder: Chunkcopy cannot copy folders
         Files.copy(files[i].toPath(), target.toPath() );
         bytesCopied += files[i].length();
         dive(files[i], bc + File.separator + files[i].getName());
-      }else{
+      }else{ // File: Chunck them files
         chunkCopy(files[i], target);
       }
       System.out.print(files[i].toPath() + " : " );
@@ -209,7 +211,14 @@ public class Dove {
       }
     }
   }//TODO add code to kiosk to chunk update properly.
-  //wont copy folders
+  /**
+   * Splits files into small chunks of given length and copies them to allow
+   *     time tracking of process. Cannot copy folders.
+   * @param src Source File being copied
+   * @param tgt Destination file location
+   * @throws IOException 
+   * @see BUFFER_LENGTH
+   */
   private void chunkCopy(File src, File tgt) throws IOException {
     BufferedInputStream in = null;
     BufferedOutputStream out = null;

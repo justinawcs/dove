@@ -13,8 +13,8 @@ public class Content {
   
   
   public Content(String s,  boolean allowsNoThumbs){
-    src = new File(s);
     allowNoThumb = allowsNoThumbs;
+    src = new File(s);
     reload();
   }
   public Content(String s){

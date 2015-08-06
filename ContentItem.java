@@ -35,7 +35,8 @@ public class ContentItem{
     }
     if(hasImage){
       try{
-        System.out.print("[ContentItem] Fetching img: " + item.getAbsolutePath() );
+        System.out.print("[ContentItem] Fetching img: " +
+            item.getAbsolutePath() );
         img = ImageIO.read(new File(item.getAbsolutePath() + File.separator + 
         "thumb." + imgType ));
         System.out.println(" - Done.");
@@ -58,11 +59,15 @@ public class ContentItem{
     }else{//f.isFolder() 
       count += f.length();
       File files[] = f.listFiles();
-      for(int i=0;i<files.length;i++){
-        if(files[i].isFile()){
-          count += files[i].length();
-        }else /*if(files[i].isDirectory())*/ {
-          count += dive(files[i]);
+      if(files == null /*|| files.length == 0 */){
+        System.out.println("EmptyFolder: " + f );
+      }else{
+        for(int i=0;i<files.length;i++){
+          if(files[i].isFile()){
+            count += files[i].length();
+          }else /*if(files[i].isDirectory())*/ {
+            count += dive(files[i]);
+          }
         }
       }
     }
@@ -74,11 +79,15 @@ public class ContentItem{
   
   private void makeNames(File f, String bc){
     File files[] = f.listFiles();
-    for(int i=0;i<files.length;i++){
-      names.add( bc + File.separator + files[i].getName() );
-      //every file/folder, etc.  item gets copied, folder get delved into 
-      if(files[i].isDirectory()){
-        makeNames(files[i], bc + File.separator + files[i].getName());
+    if(files == null /*|| files.length == 0 */){
+      System.out.println("EmptyFolder: " + f );
+    }else{
+      for(int i=0;i<files.length;i++){
+        names.add( bc + File.separator + files[i].getName() );
+        //every file/folder, etc.  item gets copied, folder get delved into 
+        if(files[i].isDirectory()){
+          makeNames(files[i], bc + File.separator + files[i].getName());
+        }
       }
     }
   }

@@ -216,6 +216,7 @@ public class ConfigWizard {
         //write to file
         try{
           if(!hasConfig){
+            config.getParentFile().mkdirs();
             config.createNewFile();
             config.setWritable(true);
             config.setReadable(true);
@@ -403,7 +404,8 @@ public class ConfigWizard {
               "\nFolder Name: " + folderName +
               "\nGrepExcludes: " + grepEx +
               "\nNoThumbs: " + noThumbs +
-              "\nSearchFileNames: " + searchFileNames );	
+              "\nSearchFileNames: " + searchFileNames +
+              "\nConfiguration file location: " + config.getAbsolutePath() );
       System.out.print("Is the information above correct? [true|false]\n> ");
       input = key.nextLine();
       check = false;
@@ -425,6 +427,7 @@ public class ConfigWizard {
     }//end input loop
     try{
       if(!hasConfig){
+        config.getParentFile().mkdirs();
         config.createNewFile();
         config.setWritable(true);
         config.setReadable(true);
