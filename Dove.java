@@ -200,7 +200,7 @@ public class Dove {
         Files.copy(files[i].toPath(), target.toPath() );
         bytesCopied += files[i].length();
         dive(files[i], bc + File.separator + files[i].getName());
-      }else{ // File: Chunck them files
+      }else{ // isFile: Chunk them files
         chunkCopy(files[i], target);
       }
       System.out.print(files[i].toPath() + " : " );
