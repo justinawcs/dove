@@ -28,7 +28,7 @@ public class ContentItem{
   /**
    * Constructor: takes File object given and tests it to see if it is valid 
    * Dove content and/or has a thumbnail image.
-   * @param it ContentItem File location
+   * @param it ContentItem file(folder) location
    */
   public ContentItem(File it){
     item = it;
@@ -137,7 +137,7 @@ public class ContentItem{
   }
 
   /**
-   * Reads from info.dat file, necessary to be valid ContentItem. 
+   * Reads from info.dat file, a necessary file to be valid ContentItem. 
    */
   private void makeInfo(){
     try {
@@ -158,6 +158,7 @@ public class ContentItem{
   }
 
   /**
+   * Returns ContentItem file location(folder) as File object.
    * @returns File location
    */
   public File getFile() {
@@ -165,6 +166,7 @@ public class ContentItem{
   }
 
   /**
+   * Returns total file size in bytes
    * @returns total Filesize
    */
   public long getSize() {
@@ -172,6 +174,7 @@ public class ContentItem{
   }
   
   /**
+   * Returns the exact time ContentItem was created as a Date Object.
    * @returns creation Date
    */
   public Date getDate() {
@@ -179,6 +182,7 @@ public class ContentItem{
   }
 
   /**
+   * Returns Info object that holds more data about the ContentItem
    * @returns Info object
    */
   public Info getInfo() {
@@ -186,6 +190,7 @@ public class ContentItem{
   }
   
   /**
+   * Returns the image thumbnail
    * @returns thumbnail image
    */
   public Image getImage(){
@@ -193,6 +198,7 @@ public class ContentItem{
   }
   
   /**
+   * Returns the image thumbnail file
    * @returns thumbnail image file
    */
   public File getImageFile(){
@@ -200,6 +206,7 @@ public class ContentItem{
   }
   
   /**
+   * Returns the file size of the image thumbnail 
    * @returns thumbnail image filesize
    */
   public long getImageSize(){
@@ -207,6 +214,7 @@ public class ContentItem{
   }
   
   /**
+   * Returns true if ContentItem has a thumbnail image
    * @ reuturns boolean true if there is a thumbnail image
    */
   public boolean hasImage(){
@@ -214,6 +222,7 @@ public class ContentItem{
   }
   
   /**
+   * Returns arraylist of filenames in the ContentItem folder
    * @returns String-type ArrayList of all included file names
    */
   public ArrayList<String>  getNames(){
@@ -250,6 +259,7 @@ public class ContentItem{
   }
   
   /**
+   * Reutns true if this ContentItem has been found to have vaild data
    * @returns boolean true if valid data has been found
    */
   public boolean hasData() {
@@ -257,6 +267,7 @@ public class ContentItem{
   }
   
   /**
+   * Returns a string of class object information
    * @returns relevant class information in string object
    */
   @Override
