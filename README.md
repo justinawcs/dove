@@ -52,6 +52,8 @@ This README would normally document whatever steps are necessary to get your app
  	break lines before symbols
  	Flatten all toString to true one-liners
  	add logs ability and log levels
+ 	add recipt functionality, give time and date of transaction history in dove
+ 	    folder
 
 ###Bookmarks
 * http://stackoverflow.com/questions/13574461/need-to-have-jprogress-bar-to-measure-progress-when-copying-directories-and-file
