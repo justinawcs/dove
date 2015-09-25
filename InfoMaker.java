@@ -2,27 +2,70 @@ import java.util.Scanner;
 import java.io.*;
 import java.nio.file.Files;
 //import javax.imageio.ImageIO;
-public class InfoMaker {
 
+/**
+ * Creates files that describe content to be read by Dove. Makes a human 
+ * readable info.txt file, info.html and a binary data info.dat that will hold 
+ * informational data about content. Name, origin, description, and boolean 
+ * tags: video, audio, music, document, piture, other.
+ * @author Justin Williams
+ * @version 0.0.8
+ */
+public class InfoMaker {
+  
+  /**
+   * Contstructor: takes content information as params and makes .txt and .dat 
+   * files.
+   * @param name Content name
+   * @param org Content origin
+   * @param desc Content description
+   * @param vid boolean video
+   * @param aud boolean audio
+   * @param mus boolean music
+   * @param doc boolean document
+   * @param picboolean piture
+   * @param other boolean other data
+   * @param path absolute filepath 
+   */
   public InfoMaker(String name, String org, String desc, boolean vid, boolean aud,
           boolean mus, boolean doc, boolean pic, boolean other, File path) throws IOException{
     Info result = new Info(name, org, desc, vid, aud, mus, doc, pic, other);
     writeOut(result, path);
   }
+  
+  /**
+   * Overloaded Constructor:  takes content information as params and makes .txt
+   * and .dat files.
+   * @param result Info object
+   * @param path absolute filepath
+   */
   public InfoMaker(Info result, File path) throws IOException{
     writeOut(result, path);
   }
   
+  /**
+   * Overloaded Constructor:  takes content information and thumbnail image file
+   * as params and makes .txt and .dat files. 
+   * @param result Info object
+   * @param path absolute filepath
+   * @param img thumbnail file
+   */
   public InfoMaker(Info result, File tgtPath, File img) throws IOException{
     writeOut(result, tgtPath, img);
     copyImg(tgtPath, img);
   }
   
+  /**
+   * Creates info.dat, .html, and .txt files with content information.
+   * @param result Info object
+   * @param path absolute filepath
+   */
   public static void writeOut(Info data, File path) throws IOException{
     //info.dat
     System.out.println("[InfoMaker] "+ data.toString());
     System.out.print("Info:"+ path + File.separator + "info.dat, ");
-    FileOutputStream out = new FileOutputStream(path.getAbsoluteFile() + File.separator + "info.dat");
+    FileOutputStream out = new FileOutputStream(path.getAbsoluteFile() 
+        + File.separator + "info.dat");
     ObjectOutputStream outputFile = new ObjectOutputStream(out);
     outputFile.writeObject(data);
     outputFile.close();
@@ -32,9 +75,15 @@ public class InfoMaker {
     PrintWriter print = new PrintWriter(fw);
     print.println(data.toHtml());
     print.close();
-    
-    
   }
+  
+  /**
+   * Creates info.dat, .html, and .txt files with content information includes 
+   * thumbnail image.
+   * @param result Info object
+   * @param path absolute filepath
+   * @param img thumbnail file
+   */
   public static void writeOut(Info data, File path, File img) throws IOException{
     //info.dat
     System.out.println("[InfoMaker] "+ data.toString());
@@ -54,6 +103,11 @@ public class InfoMaker {
     print.close();
   }
   
+  /**
+   * Returns string of example filenames that will be created by this class.
+   * @param path absolute filepath
+   * @param img thumbnail file
+   */
   public static String showExampleWriteOut(File path, File img){
     String str = path + File.separator + "info.dat\n";
       //str += path + File.separator + "info.txt\n";
@@ -63,15 +117,18 @@ public class InfoMaker {
     return str;
   }
   
+  /**
+   * Copy image from given location to target location and renames to thumb.EXT,
+   * where EXT is provided image extention, example: .jpg
+   * @param path absolute filepath
+   * @param img thumbnail file
+   */
   public static void copyImg(File path, File img) throws IOException{
     // just copy image 
     String type = img.getName();
     //String type;
     int split = type.lastIndexOf(".");
     type = type.substring(split);
-    
-    
-    
     
     File output = new File(path.toString() + File.separator + "thumb" + type);
     System.out.println(output.toString());
@@ -90,16 +147,22 @@ public class InfoMaker {
           + "OLD_" + list[i].getName()));
         }
       }
-      
     }
     Files.copy(img.toPath(), output.toPath() );
   }
   
-  public static void convertImg(File path, File img){
-    //TODO convert image using compression
-  }
   /**
-   * @param args
+   * Converts/reduces image size to thumbnail appropiate dimensions.
+   * @param path absolute filepath
+   * @param img thumbnail file 
+   */
+  public static void convertImg(File path, File img){
+    //TODO convert image using compression, move from InfoMakerGUI
+  }
+  
+  /**
+   * Main method: interactive input to create content informational files.
+   * @param args not used
    */
   public static void main(String[] args) throws IOException{
     // Creates a java readable file: info.dat
@@ -166,7 +229,5 @@ public class InfoMaker {
     print.println(result.toString());
     print.close();
     */
-    
   }
-
 }

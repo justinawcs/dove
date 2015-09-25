@@ -2,14 +2,14 @@
 
 This README would normally document whatever steps are necessary to get your application up and running.
 ## TODO List
-    Relief Kiosk, or pick new name
+    Relief Kiosk, or pick new name: BarleyKiosk
     --DoveCLI
   	--InfoMakerCLI
  	--drive Skipper class
  	--thumbnail only button
  	--file list on GUI
  	--'df -h' to get partition size estimates? --> df only reads mounted fs, 
- 	 --wont work.
+ 	  --wont work.
  	--config and info config setters -> Wizards
  	--tui and gui for config.cfg file
  	--look for config files in home directory, System.getProperty("user.home");
