@@ -1564,8 +1564,9 @@ public class DoveGUI extends JFrame{
           if(!main.getDevices().getMountedDrive().isSetup()){
             main.getDevices().getMountedDrive().setupDrive();
           }
-          Thread.sleep(1000);
+          Thread.sleep(1000); //TODO Remove pause!
           main.copy(list.get(i) );
+          
           bytesCopied += main.getBytesCopied();
           Double temp = (bytesCopied / (double)listTotalSize);
           int temp2 = (int) (100*bytesCopied / listTotalSize);
@@ -1589,6 +1590,30 @@ public class DoveGUI extends JFrame{
       return null;
     }
   }
+  
+  private class CopyWorker extends SwingWorker<Boolean, Long>{
+    
+    public Boolean doInBackground(){ //In a Thread
+      long copiedBytes = 0L;
+      process(copiedBytes);
+      System.out.println("Starting copy.");
+      for(int i=0; i<list.size(); i++){
+        try{
+          
+        }finally{}
+      }
+      return false;
+    }
+    
+    public Long process(long bytes){ //In EDT
+      //update copyBar?
+      return (bytes / listTotalSize) * 100;
+    }
+    public void done(){ //In EDT
+      
+    }
+  }
+  
   private class ProgressChangeListener implements PropertyChangeListener{
     public void propertyChange(PropertyChangeEvent evt) {
       int progress = (Integer) evt.getNewValue();

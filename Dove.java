@@ -1,6 +1,7 @@
 import java.awt.GraphicsEnvironment;
 import java.io.*;
 import java.nio.file.*;
+import java.util.Date;
 import java.util.Properties;
 import java.util.Scanner;
 //import java.util.ArrayList;
@@ -17,7 +18,10 @@ public class Dove {
   private Devices devs;
   private Properties config = new Properties();
   private long bytesCopied = 0;
+  private long averageRate = -1L;
+  private float estimateTimeRemaining = -1F;
   private static int BUFFER_LENGTH = 1024;
+  private static long TIMER_LENGTH = 500;
   private static final String CONFIG_LOCATION = System.getProperty("user.home")
       + File.separator + ".dove" + File.separator;
   //Default values
@@ -108,6 +112,7 @@ public class Dove {
       if(ans.startsWith("q")){
         System.exit(0);
       }
+      key.close();
     }else{
       //GUI present use JOptionPane to warn user, then continue
       JOptionPane.showMessageDialog(null, WARN, "Configuration", 
@@ -215,7 +220,7 @@ public class Dove {
    * Splits files into small chunks of given length and copies them to allow
    *     time tracking of process. Cannot copy folders.
    * @param src Source File being copied
-   * @param tgt Destination file location
+   * @param tgt Target file destination
    * @throws IOException 
    * @see BUFFER_LENGTH
    */
@@ -227,9 +232,35 @@ public class Dove {
       out = new BufferedOutputStream(new FileOutputStream(tgt));
       int bit;
       byte[] buffer = new byte[BUFFER_LENGTH];
+        long length = src.length();
+        long progress = 0L;
+        long lastRate = -1L;
+        long loopCount = 0L;
+        Date start = new Date();
+        Date segmentTime = start;
+      //sets bit = read buffer, and checks that the file still has data left
       while((bit = in.read(buffer)) != -1){
+        //writes the buffer to target 
         out.write(buffer, 0, bit);
         bytesCopied += bit;
+        loopCount++;
+        long timer = new Date().getTime() - segmentTime.getTime();
+        if(timer >= TIMER_LENGTH){
+          //'seg' = segment, a grouping of these loops
+          long segDataSize = bit * loopCount;
+          long segDataRate = (long) (segDataSize / (timer/1000d));//millisecond
+          //zero pre-check, sets pastRate=rate if -1, or first run
+          lastRate = (lastRate == -1L) ? segDataRate : lastRate;
+          long avgRate = (lastRate + segDataRate) / 2; //averageRate
+          float estTimeRem = (length - progress) / (float)avgRate;
+          //TODO all length??
+          averageRate = avgRate;
+          estimateTimeRemaining = estTimeRem;
+          lastRate = segDataRate;
+          //System.out.println(src+" AvgRate:"+avgRate +" TimeRem"+ estTimeRem);
+          loopCount = 0L;
+          segmentTime = new Date();
+        }
       }
     }catch (Exception e){
       e.printStackTrace();
@@ -276,6 +307,23 @@ public class Dove {
    */
   public long getBytesCopied(){
     return bytesCopied;
+  }
+  /**
+   * Gives average transfer rate of copy, in bytes per second.
+   * Use humanReadableByteCount() to easily read.
+   * @see humanReadableByteCount()
+   * @return     average number of bytes that have been copied already
+   */
+  public long getAverageRate() {
+    return averageRate;
+  }
+
+  /**
+   * Estimate of remaining time in seconds remaining, as a float.
+   * @return     floating point number
+   */
+  public float getEstimateTimeRemaining() {
+    return estimateTimeRemaining;
   }
   
   /**

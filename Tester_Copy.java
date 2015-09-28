@@ -13,9 +13,9 @@ public class Tester_Copy {
     BufferedInputStream in = null;
     BufferedOutputStream out = null;
     File src = new File("music.mp3");
-    //File dest = File.createTempFile("out", ".mp3");
+    File dest = File.createTempFile("out", ".mp3");
     //File src = new File("/media/jaw/VAULT/avast_free_antivirus_setup.exe");
-    File dest = new File("/media/jaw/FDC5-9C13/out.exe");
+    //File dest = new File("/media/jaw/FDC5-9C13/out.exe");
     dest.createNewFile();
 
     try {
@@ -58,7 +58,7 @@ public class Tester_Copy {
           long delta = (c * loopCount) ; 
           long rate = (long) (delta / (counter/1000d));
           //zero pre-check, sets pastRate=rate if 0, or first run
-          pastRate = (pastRate == 0L) ? rate : pastRate;
+          pastRate = (pastRate == -1L) ? rate : pastRate;
           float estim =(length - progress) / (float)rate ;
           long avg = (pastRate + rate) / 2L; 
           float avgEstim = (length - progress) / (float)avg;

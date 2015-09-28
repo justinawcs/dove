@@ -45,7 +45,7 @@ public class DriveSkipper{
       System.out.println("[DriveSkipper] 'skippedDrives' file not found. Using defaults.");
       excludeList = DEFAULTS;
       excludeArray = DEFAULTS_ARRAY;
-      io.printStackTrace();
+      //io.printStackTrace();
     }
   }
   
