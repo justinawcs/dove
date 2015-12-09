@@ -59,6 +59,7 @@ This README would normally document whatever steps are necessary to get your app
 * http://stackoverflow.com/questions/13574461/need-to-have-jprogress-bar-to-measure-progress-when-copying-directories-and-file
 * see drive
 * [Copy Estimates](http://stackoverflow.com/questions/1152208/computing-estimated-times-of-file-copies-movements)
+* [File Size Limits](http://stackoverflow.com/questions/21926721/bash-how-to-find-the-max-supported-file-size-of-a-filesystem)
  	
 
 ### Online IDEs
