@@ -36,6 +36,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 import java.io.IOException;
 
 /**
@@ -43,9 +44,10 @@ import java.io.IOException;
  *
  */
 @SuppressWarnings("serial")
-public class DoveGUI extends JFrame{
+public class DoveGUI extends Dove{
   //TODO Load Dove differently to allowing tracking of loading at startup
-  private Dove main;
+  //private Dove main;
+  private JFrame frame;
   final int WINDOW_WIDTH = 800;
   final int WINDOW_HEIGHT = 600;
   private CardLayout cards = new CardLayout();
@@ -62,7 +64,7 @@ public class DoveGUI extends JFrame{
   private JButton bHelp, bSeeList, bCopy, bRefreshDrives;
   private JButton bFirst, bPrev, bNext, bLast, bClear, bPager;
   private JButton bBack, bAdd, bRemoveDevice;
-  private JLabel lStatus, lWarn, lData;
+  private JLabel lStatus, lWarn, lData, lCopyStatus;
   private JTextField tSearch;
   private JProgressBar beforeBar, afterBar, copyBar, loadBar;
   private JComboBox<String> driveList;
@@ -90,17 +92,17 @@ public class DoveGUI extends JFrame{
   public DoveGUI(){
     //start splash
     startSplash();
-    main = new Dove();
-    main.getDevices().addDevice("/tmp/ramdisk/","Ramdisk","16 MB", true);
-    setTitle("Dove");
-    setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame = new JFrame();
+    getDevices().addDevice("/tmp/ramdisk/","Ramdisk","16 MB", true);
+    frame.setTitle("Dove");
+    frame.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     panel = new JPanel();
     panel.setLayout(new BorderLayout() );
     cardPanel = new JPanel();
     cardPanel.setLayout(cards);
-    main.getSource().sortDate();
-    main.getSource().reverse();// Default, newest first
+    getSource().sortDate();
+    getSource().reverse();// Default, newest first
     selectCard = new JPanel();
     selectCard.setLayout(new BoxLayout(selectCard, BoxLayout.LINE_AXIS));
     makeSidebar();
@@ -110,16 +112,17 @@ public class DoveGUI extends JFrame{
     cardPanel.add(selectCard, "select");
     cards.first(cardPanel);
     panel.add(cardPanel, BorderLayout.CENTER);
-    add(panel);
-    setLocationRelativeTo(null);
+    frame.add(panel);
+    frame.setLocationRelativeTo(null);
     //pack();
     makeWelcome();
     cardPanel.add(welcomeCard, "welcome");
     cards.show(cardPanel, "welcome");		
     splash.setVisible(false);
-    setVisible(true);
+    frame.setVisible(true);
     splash.dispose();
   }
+  
   public void startSplash(){
     splash = new JWindow();
     JPanel panel = new JPanel(new BorderLayout());
@@ -184,14 +187,14 @@ public class DoveGUI extends JFrame{
     String h = "<html>Choose your storage device.</html>";
     lStatus.setText(h);
     JPanel drv = new JPanel();
-      int driveCount = main.getDevices().getInfoArray().length;
+      int driveCount = getDevices().getInfoArray().length;
        
       drv.setLayout(new GridLayout(4,1,10,10));
       drv.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
       for(int i=0; i < driveCount; i++){
-        String name = main.getDevices().getInfoArray()[i];
+        String name = getDevices().getInfoArray()[i];
         JButton num;
-        if(main.getDevices().getMountedIndex() == i){
+        if(getDevices().getMountedIndex() == i){
           num = new JButton("<html>" + name + 
               "<br />Now Mounted</html>");
         }else{
@@ -548,9 +551,9 @@ public class DoveGUI extends JFrame{
         thumb.setPreferredSize(new Dimension(300,300));
       }
     String d = Dove.humanReadableByteCount(peek.getSize(),false);
-    String per = (main.getDevices().isMounted() ? 
+    String per = (getDevices().isMounted() ? 
         " or "+perc.format((double)peek.getSize() / 
-            (double) main.getDevices().getMountedDrive()
+            (double) getDevices().getMountedDrive()
             .getTotalSpace() ) +" of drive capacity." : "" );
     //JLabel lSize = new JLabel("Size: "+ d + per, SwingConstants.RIGHT);
     /*Box bxSize = new Box(BoxLayout.LINE_AXIS);
@@ -628,12 +631,12 @@ public class DoveGUI extends JFrame{
     listCard.setBorder(BorderFactory.createEmptyBorder(20,30,20,30) );
     String h= "<html>Showing the list of items that will be "+
         "transfered to your storage device.";
-    if(!main.getDevices().isMounted() ){
+    if(!getDevices().isMounted() ){
       h+="<br />Please mount a drive from the Drop Down box Below," +
           " to see available space.";
-    }else if(listTotalSize >= main.getDevices().getMountedDrive()
+    }else if(listTotalSize >= getDevices().getMountedDrive()
         .getFreeSpace()){
-      long over = listTotalSize - main.getDevices().getMountedDrive()
+      long over = listTotalSize - getDevices().getMountedDrive()
           .getFreeSpace();
       String overS = Dove.humanReadableByteCount(over, false);
       double overPer = (double)over / (double)listTotalSize;
@@ -748,8 +751,8 @@ public class DoveGUI extends JFrame{
           flag++;
         }
       JButton listSpace = new JButton();
-        if(main.getDevices().isMounted() && listTotalSize >= 
-        main.getDevices().getMountedDrive().getFreeSpace() ){
+        if(getDevices().isMounted() && listTotalSize >= 
+        getDevices().getMountedDrive().getFreeSpace() ){
           listSpace.setText(h+"List is too large to be copied to " +
               "device. Remove some items."+h2);
           listSpace.setEnabled(true);
@@ -761,7 +764,7 @@ public class DoveGUI extends JFrame{
           listSpace.setEnabled(false);
         }
       JButton drvMounted = new JButton();
-        if(main.getDevices().isMounted() ){
+        if(getDevices().isMounted() ){
           drvMounted.setText(h+"Drive properly mounted."+h2);
           drvMounted.setEnabled(false);
         }else{
@@ -813,10 +816,10 @@ public class DoveGUI extends JFrame{
           copyBar.setMaximum(100);
           copyBar.setString("Ready...");
           copyBar.setStringPainted(true);
-        JLabel filesRemaining = new JLabel("Files remaining: ");
+        lCopyStatus = new JLabel("Files remaining: ");
         bxBar.add(copyBar);
         bxBar.add(Box.createRigidArea(vSpace)); 
-        bxBar.add(filesRemaining);
+        bxBar.add(lCopyStatus);
       //JLabel success = new JLabel("<html><h2>Files copied successfully.
         //</h2>");
       //	success.setEnabled(false);
@@ -906,16 +909,16 @@ public class DoveGUI extends JFrame{
     bookmark = start;
     //int count = main.getSource().getLength() < PAGE_SIZE ? 
       //main.getSource().getLength() : PAGE_SIZE;
-    int count = main.getSource().getLength();
+    int count = getSource().getLength();
     //System.out.println(start +" "+ bookmark +" "+ count);
     for(int i=start; i < (start+PAGE_SIZE) ;i++){
       //System.out.print(i + "-" +count);
       if(i<count){
-        String name = main.getSource().getInfoAt(i).getName();
+        String name = getSource().getInfoAt(i).getName();
         //System.out.println("  " + name);
         ImageIcon icon;
         try{
-          icon = new ImageIcon(main.getSource().getItemAt(i)
+          icon = new ImageIcon(getSource().getItemAt(i)
               .getImageScaledFast(160,160));
         }catch(NullPointerException e){
           icon = null;
@@ -963,11 +966,11 @@ public class DoveGUI extends JFrame{
     nav.repaint();
     //lPager = new JLabel("Stuff");
     int page = (bookmark / PAGE_SIZE)+1;
-    int pageMax = ((main.getSource().getLength() - 1) / PAGE_SIZE ) +1  ;
+    int pageMax = ((getSource().getLength() - 1) / PAGE_SIZE ) +1  ;
     pager = "Page " + page +" of "+ pageMax;
     //pager = (bookmark+1) +" : "+Integer.valueOf(bookmark+PAGE_SIZE)
     //.toString(); 
-        //+" of " + main.getSource().getLength();
+        //+" of " + getSource().getLength();
     //System.out.println("[DoveGUI.updatePager] Pager: "+ pager);
     bPager.setText(pager);
     bPager.setEnabled(false);
@@ -985,7 +988,7 @@ public class DoveGUI extends JFrame{
   }
   
   private void updateNav(){
-    if(bookmark+PAGE_SIZE >= main.getSource().getLength() ){
+    if(bookmark+PAGE_SIZE >= getSource().getLength() ){
       bNext.setEnabled(false);
       bLast.setEnabled(false);
     }else{
@@ -1003,7 +1006,7 @@ public class DoveGUI extends JFrame{
   }
   
   private void updateStatus(){
-    int i = main.getSource().getLength();
+    int i = getSource().getLength();
     int higher = i<bookmark+PAGE_SIZE ? i : bookmark + PAGE_SIZE;
     int lower = higher==0 ? 0 : bookmark+1;
     String stat = "Showing "+ lower +" through "+ higher +" of  "+ i + 
@@ -1021,10 +1024,10 @@ public class DoveGUI extends JFrame{
   }
   private void updateBars(){
       double percentRemBefore, percentRemAfter;
-      if(main.getDevices().isMounted() ){
-        percentRemBefore = main.getDevices().getMountedDrive()
+      if(getDevices().isMounted() ){
+        percentRemBefore = getDevices().getMountedDrive()
             .getPercentRem();
-        percentRemAfter = main.getDevices().getMountedDrive()
+        percentRemAfter = getDevices().getMountedDrive()
             .getPercentRem(listTotalSize);
         double beforeVal = BAR_MAX - percentRemBefore * (BAR_MAX/100);
         //beforeBar.setForeground(new Color(96, 128, 64));
@@ -1074,7 +1077,7 @@ public class DoveGUI extends JFrame{
   */
     }
   private void updateDriveList(){
-    String[] arr = main.getDevices().getInfoArray();
+    String[] arr = getDevices().getInfoArray();
     String[] done = new String[arr.length +1];
     driveList.removeAllItems();
     done[0] = ("Select Drive to Mount");//position 0
@@ -1105,44 +1108,44 @@ public class DoveGUI extends JFrame{
     //System.out.println("Sort ordinal - " +sort.ordinal() );
     switch(sort.ordinal()){
     case 0: //AZ
-      main.getSource().sortAZ();
+      getSource().sortAZ();
       break;
     case 1: //ZA
-      main.getSource().sortAZ();
-      main.getSource().reverse();
+      getSource().sortAZ();
+      getSource().reverse();
       break;
     case 2: //Newest
-      main.getSource().sortDate();
-      main.getSource().reverse();
+      getSource().sortDate();
+      getSource().reverse();
       break;
     case 3: //Oldest
-      main.getSource().sortDate();
+      getSource().sortDate();
       break;
     case 4: //Smallest
-      main.getSource().sortSize();
+      getSource().sortSize();
       break;
     case 5: //Largest
-      main.getSource().sortSize();
-      main.getSource().reverse();
+      getSource().sortSize();
+      getSource().reverse();
       break;
     default:
       System.out.println("Bad Sort: "+sort + sort.ordinal());
-      main.getSource().sortDate();
-      main.getSource().reverse();
+      getSource().sortDate();
+      getSource().reverse();
     }
   }
   private void filter(){
-    main.getSource().refresh();
+    getSource().refresh();
     if(isThumbsOnly){
-      main.getSource().onlyThumbs();
+      getSource().onlyThumbs();
     }else{
     }
     if(isSearch){
-      main.getSource().search(search);
+      getSource().search(search);
     }else{
     }
     if(isTags){
-      main.getSource().tags(cVid.isSelected(), cAud.isSelected(),
+      getSource().tags(cVid.isSelected(), cAud.isSelected(),
           cMus.isSelected(), cDoc.isSelected(), 
           cPic.isSelected(), cOther.isSelected());
     }else{
@@ -1174,6 +1177,11 @@ public class DoveGUI extends JFrame{
       //}
     }
   }*/
+  
+  private void chunkCopy(File src, File tgt) throws IOException {
+    
+  }
+  
   private class SearchTextFieldListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       isSearch = true;
@@ -1182,8 +1190,8 @@ public class DoveGUI extends JFrame{
         //System.out.println("Null Search");
         isSearch = false;
       }else{
-        main.getSource().refresh();
-        main.getSource().search(stSearch);//allows for config set
+        getSource().refresh();
+        getSource().search(stSearch);//allows for config set
         search = stSearch;
         filter();
         updateStatus();
@@ -1225,7 +1233,7 @@ public class DoveGUI extends JFrame{
       //tSearch.setText(null);
       isSearch = false;
       search = null;
-      main.getSource().refresh();
+      getSource().refresh();
       filter();
       updateStatus();
       updateGrid(0);
@@ -1237,10 +1245,10 @@ public class DoveGUI extends JFrame{
     public void actionPerformed(ActionEvent e){
       if(cThumbsOnly.isSelected()){//Show Thumbs Only = true
         isThumbsOnly = true;
-        main.getSource().setAllowNoThumb(false);
+        getSource().setAllowNoThumb(false);
       }else{
         isThumbsOnly = false;
-        main.getSource().setAllowNoThumb(true);
+        getSource().setAllowNoThumb(true);
       }
       filter();
       updateStatus();
@@ -1250,7 +1258,7 @@ public class DoveGUI extends JFrame{
   }
   private class AZButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
-      main.getSource().sortAZ();
+      getSource().sortAZ();
       sort = SortType.AZ;
       updateStatus();
       updateGrid(0);
@@ -1259,8 +1267,8 @@ public class DoveGUI extends JFrame{
   }
   private class ZAButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
-      main.getSource().sortAZ();
-      main.getSource().reverse();
+      getSource().sortAZ();
+      getSource().reverse();
       sort = SortType.ZA;
       updateStatus();
       updateGrid(0);
@@ -1269,8 +1277,8 @@ public class DoveGUI extends JFrame{
   }
   private class NewButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
-      main.getSource().sortDate();
-      main.getSource().reverse();
+      getSource().sortDate();
+      getSource().reverse();
       sort = SortType.NEW;
       updateStatus();
       updateGrid(0);
@@ -1279,7 +1287,7 @@ public class DoveGUI extends JFrame{
   }
   private class OldButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
-      main.getSource().sortDate();
+      getSource().sortDate();
       sort = SortType.OLD;
       updateStatus();
       updateGrid(0);
@@ -1288,7 +1296,7 @@ public class DoveGUI extends JFrame{
   }
   private class SmallButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
-      main.getSource().sortSize();
+      getSource().sortSize();
       sort = SortType.SMALL;
       updateStatus();
       updateGrid(0);
@@ -1297,8 +1305,8 @@ public class DoveGUI extends JFrame{
   }
   private class LargeButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
-      main.getSource().sortSize();
-      main.getSource().reverse();
+      getSource().sortSize();
+      getSource().reverse();
       sort = SortType.LARGE;
       updateStatus();
       updateGrid(0);
@@ -1309,7 +1317,7 @@ public class DoveGUI extends JFrame{
 
 /*	private class AnyButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
-      main.getSource().tagsAny(cVid.isSelected(), cAud.isSelected(),
+      getSource().tagsAny(cVid.isSelected(), cAud.isSelected(),
           cMus.isSelected(), cDoc.isSelected(), 
           cPic.isSelected(), cOther.isSelected() );
       updateStatus();
@@ -1319,11 +1327,11 @@ public class DoveGUI extends JFrame{
   //TODO fix
   private class FindTagsButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
-      main.getSource().refresh();
+      getSource().refresh();
       if(((JCheckBox)e.getSource()).isSelected() ){
         //item was selected
         isTags = true;
-        main.getSource().tags(cVid.isSelected(), cAud.isSelected(),
+        getSource().tags(cVid.isSelected(), cAud.isSelected(),
           cMus.isSelected(), cDoc.isSelected(), cPic.isSelected(), 
           cOther.isSelected() );
       }else{//item was deselected
@@ -1331,11 +1339,11 @@ public class DoveGUI extends JFrame{
             ||cDoc.isSelected() || cPic.isSelected() 
             || cOther.isSelected()){
           // at least one item is still selected
-          main.getSource().tags(cVid.isSelected(), cAud.isSelected(),
+          getSource().tags(cVid.isSelected(), cAud.isSelected(),
             cMus.isSelected(), cDoc.isSelected(), cPic.isSelected(), 
             cOther.isSelected() );
         }else{//no items selected
-          main.getSource().refresh();
+          getSource().refresh();
           isTags = false;
         }
       }
@@ -1382,7 +1390,7 @@ public class DoveGUI extends JFrame{
       cPic.setSelected(false);
       cOther.setSelected(false);
       isTags = false;
-      main.getSource().refresh();
+      getSource().refresh();
       filter();
       sortLast();
       updateStatus();
@@ -1393,7 +1401,7 @@ public class DoveGUI extends JFrame{
   
   private class ClearAllButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
-      main.getSource().refresh();
+      getSource().refresh();
       isSearch = false;
       isTags = false;
       sortLast();
@@ -1430,7 +1438,7 @@ public class DoveGUI extends JFrame{
   private class DriveRefreshListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       try{
-        main.getDevices().refresh();
+        getDevices().refresh();
       }catch(IOException io){
         io.printStackTrace();
       }
@@ -1442,19 +1450,19 @@ public class DoveGUI extends JFrame{
     public void actionPerformed(ActionEvent e){
       lWarn.setText("");
       int index = driveList.getSelectedIndex();
-      if(main.getDevices().isMounted() ){//unmount on any change
-        main.getDevices().unmount();
+      if(getDevices().isMounted() ){//unmount on any change
+        getDevices().unmount();
         updateBars();
       }
       if(index == 0 || index == -1){//first item selected, refresh list
         try{
-          main.getDevices().refresh();
+          getDevices().refresh();
         }catch(IOException io){
           io.printStackTrace();
         }
         updateDriveList();
       }else if(index > 0){
-        if( main.getDevices().mount(index - 1) ){
+        if( getDevices().mount(index - 1) ){
           //lWarn.setText("");
           updateBars();
         }else{
@@ -1471,15 +1479,15 @@ public class DoveGUI extends JFrame{
       int index = Integer.parseInt(e.getActionCommand() );
       JButton drv = ((JButton) e.getSource());
       //default unmount
-      if(main.getDevices().isMounted()){
-        main.getDevices().unmount();
+      if(getDevices().isMounted()){
+        getDevices().unmount();
         System.out.println("Unmounted: "+
-        main.getDevices().getMountedDrive());
+        getDevices().getMountedDrive());
       }
         //drv.setSelected(true);
       //drv.setSelected(false);
-      main.getDevices().mount(index);
-      drv.setText(main.getDevices().getInfoArray()[index]+
+      getDevices().mount(index);
+      drv.setText(getDevices().getInfoArray()[index]+
           "\n--Now Mounted--");
       updateBars();
       cardPanel.remove(driveCard);
@@ -1495,7 +1503,7 @@ public class DoveGUI extends JFrame{
       int num = Integer.parseInt(e.getActionCommand() );
       //System.out.println(num + ":" + main.getSource().getItemAt(num)
         //.toString());
-      makeContent(main.getSource().getItemAt(num), num);
+      makeContent(getSource().getItemAt(num), num);
       cardPanel.add(contentCard, "content");
       cards.show(cardPanel, "content");
       //center.remove(stage);
@@ -1513,8 +1521,8 @@ public class DoveGUI extends JFrame{
       undoSize = new Long(listTotalSize);
       //System.out.println(undoList.toString());
       makeList();
-      if(main.getDevices().isMounted()){
-        main.getDevices().getMountedDrive().refresh();
+      if(getDevices().isMounted()){
+        getDevices().getMountedDrive().refresh();
         updateBars();
       }
       cardPanel.add(listCard, "list");
@@ -1525,8 +1533,8 @@ public class DoveGUI extends JFrame{
   private class CopyButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       makeCopy();
-      if(main.getDevices().isMounted()){
-        main.getDevices().getMountedDrive().refresh();
+      if(getDevices().isMounted()){
+        getDevices().getMountedDrive().refresh();
         updateBars();
       }
       cardPanel.add(copyCard, "copy");
@@ -1538,14 +1546,30 @@ public class DoveGUI extends JFrame{
       //((JButton)e.getSource()).setText("Now copying...");
       ((JButton)e.getSource()).setEnabled(false);
       copyBar.setIndeterminate(false);
-      copyBar.setString("0%");
+      //copyBar.setString("0%");
       copyBar.setValue(0);
-      Task copy = new Task();
-      copy.addPropertyChangeListener(new ProgressChangeListener());
-      copy.doInBackground();
+      
+      //Task copy = new Task();
+      //copy.addPropertyChangeListener(new ProgressChangeListener());
+      Copier copy = new Copier(list, listTotalSize, getDevices(), 
+          copyBar, lCopyStatus);
+      try {
+        copy.execute();
+        copy.get();
+      } catch (InterruptedException e1) {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      } catch (ExecutionException e1) {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
+      
+      //copy.done();
+      
+      
       list.clear();
       listTotalSize = 0;
-      main.getDevices().getMountedDrive().refresh();
+      getDevices().getMountedDrive().refresh();
       updateBars();
       
     }
@@ -1561,13 +1585,13 @@ public class DoveGUI extends JFrame{
       copyBar.update(copyBar.getGraphics());
       for(int i=0; i<list.size(); i++){
         try{
-          if(!main.getDevices().getMountedDrive().isSetup()){
-            main.getDevices().getMountedDrive().setupDrive();
+          if(!getDevices().getMountedDrive().isSetup()){
+            getDevices().getMountedDrive().setupDrive();
           }
           Thread.sleep(1000); //TODO Remove pause!
-          main.copy(list.get(i) );
+          copy(list.get(i) );
           
-          bytesCopied += main.getBytesCopied();
+          bytesCopied += getBytesCopied();
           Double temp = (bytesCopied / (double)listTotalSize);
           int temp2 = (int) (100*bytesCopied / listTotalSize);
           System.out.println(bytesCopied +" of "+ listTotalSize
@@ -1591,22 +1615,21 @@ public class DoveGUI extends JFrame{
     }
   }
   
+  
   private class CopyWorker extends SwingWorker<Boolean, Long>{
-    
+    //long copiedBytes = 0L;
     public Boolean doInBackground(){ //In a Thread
-      long copiedBytes = 0L;
-      process(copiedBytes);
+      publish(getBytesCopied()); //ZERO
       System.out.println("Starting copy.");
-      for(int i=0; i<list.size(); i++){
-        try{
-          
-        }finally{}
-      }
+          //copy(list.get(i) ); // <-- in progress
+          //TODO gameplan move overwrite copy..chunkcopy here, add lines that 
+          //throw updates
       return false;
     }
     
     public Long process(long bytes){ //In EDT
-      //update copyBar?
+      //update copyBar? text & progress
+      
       return (bytes / listTotalSize) * 100;
     }
     public void done(){ //In EDT
@@ -1628,7 +1651,7 @@ public class DoveGUI extends JFrame{
   
   private class DoveButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
-      main.getDevices().getMountedDrive().setupDrive();
+      getDevices().getMountedDrive().setupDrive();
       //Update list window.
     }
   }
@@ -1648,7 +1671,7 @@ public class DoveGUI extends JFrame{
           System.out.println("Bad Code: Can't go back.");
         }
       }else if(nav.contentEquals("next")){
-        if(main.getSource().getLength() > (bookmark+PAGE_SIZE) ){
+        if(getSource().getLength() > (bookmark+PAGE_SIZE) ){
           //System.out.println(bookmark+PAGE_SIZE);
           updateGrid(bookmark+PAGE_SIZE);
           //updatePager();
@@ -1657,8 +1680,8 @@ public class DoveGUI extends JFrame{
           System.out.println("Bad Code: Can't go forward.");
         }
       }else if(nav.contentEquals("last") ){
-        int hold = main.getSource().getLength() / PAGE_SIZE;
-        hold = (main.getSource().getLength() % PAGE_SIZE == 0 ?
+        int hold = getSource().getLength() / PAGE_SIZE;
+        hold = (getSource().getLength() % PAGE_SIZE == 0 ?
             hold-1: hold);
         bookmark = hold * PAGE_SIZE;
         updateGrid(bookmark);
@@ -1702,9 +1725,9 @@ public class DoveGUI extends JFrame{
   private class AddButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       int opt = Integer.parseInt(e.getActionCommand());
-      list.add(main.getSource().getItemAt(opt)) ;
+      list.add(getSource().getItemAt(opt)) ;
       //System.out.println(list.toString());
-      listTotalSize += main.getSource().getItemAt(opt).getSize();
+      listTotalSize += getSource().getItemAt(opt).getSize();
       updateBars();
       cardPanel.remove(contentCard);
       cards.first(cardPanel);
@@ -1768,7 +1791,7 @@ public class DoveGUI extends JFrame{
   }
   private class RemoveDeviceButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
-      main.getDevices().unmount();
+      getDevices().unmount();
       list.clear();
       listTotalSize = 0;
       updateBars();

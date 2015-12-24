@@ -271,6 +271,8 @@ public class Dove {
     }
   }
   
+  
+  
   /**
    * Converts long byte length to readable string 
    * @param bytes     raw number of bytes
@@ -326,6 +328,10 @@ public class Dove {
     return estimateTimeRemaining;
   }
   
+  public static long getTimerLength() {
+    return TIMER_LENGTH;
+  }
+
   /**
    * Returns data from the config file
    * @param key    text key to retrieve corresponding data

@@ -2,7 +2,7 @@
 
 This README would normally document whatever steps are necessary to get your application up and running.
 ## TODO List
-    Relief Kiosk, or pick new name
+    Relief Kiosk, BarleyBox, BarleyKiosk, or pick new name
     --DoveCLI
   	--InfoMakerCLI
  	--drive Skipper class
