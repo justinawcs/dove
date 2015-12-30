@@ -7,7 +7,14 @@ import java.util.Date;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
+/**
+ * Command line interface to select which drive should not be used by Dove,
+ * skipped drives dont show up in drive listing. 
+ * @author Justin Williams
+ * @version 0.0.8
+ */
 public class DriveWizard {
+  /** Main method: */
   public static void main(String[] args){
     //DriveSkipper one = new DriveSkipper();
     //System.out.println("[DriveSkipper] "+ one.getExcludeList());
@@ -15,7 +22,8 @@ public class DriveWizard {
     //needs root permissions
     boolean[] checkBoxList;
     String[] blkid, fdisk;
-    String selected, swapLine = "TYPE=\"swap\" Recommended. Blocks all swapfile filesystems.";
+    String selected;
+    String swapLine = "TYPE=\"swap\" Recommended. Blocks all swapfile filesystems.";
     blkid = Devices.getRawBlkidOutput();
     fdisk = Devices.getRawFdiskOutput();
       //Add swapline to blkid array in first position
@@ -159,7 +167,14 @@ public class DriveWizard {
     key.close();
   }
 
-  public static String getFileSystems(String[] fdk, String[] blk, boolean[] bols){
+  /**
+   * Returns string of filesystem drives
+   * @param fdk fdisk results array
+   * @param blk blkid results array
+   * @param bols boolean array, T/F used in this class
+   */
+  public static String getFileSystems(String[] fdk, String[] blk,
+      boolean[] bols){
     String hold = "Disk Drive Sizes:";
     for(String fd : fdk){
       hold += "\n" + fd;
@@ -170,6 +185,12 @@ public class DriveWizard {
     }
     return hold;
   }
+  
+  /**
+   * Gets UUID from given string.
+   * @param line given string
+   * @returns uuid string
+   */
   private static String pullUUID(String line){
     // need UUID="BLAH"
     String temp;

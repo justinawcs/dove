@@ -17,6 +17,10 @@ import javax.swing.JPanel;
 
 //import java.util.StringTokenizer;
 
+/**
+ * Provides interface to change settings in 'config.cfg'.
+ * Text based or gpahics based.
+ */
 public class ConfigWizard {
   public static void main(String[] args){
     boolean textMode = false;
@@ -34,6 +38,9 @@ public class ConfigWizard {
     }
   }
   
+  /**
+   * Starts graphical user interface to edit config.cfg.
+   */
   public static void graphicInterface(){
     //and additional explanations in main panel 
     String mountLoc ="", contentLoc ="", folderName="";
@@ -250,6 +257,9 @@ public class ConfigWizard {
     System.exit(0);
   }
   
+  /**
+   * Starts text interface to edit config.cfg
+   */
   public static void textInterface(){
     String mountLoc = "", contentLoc = "", folderName = "";
     boolean grepEx =false, noThumbs= false, searchFileNames= false;

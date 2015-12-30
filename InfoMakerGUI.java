@@ -11,16 +11,15 @@ import java.awt.BorderLayout;
 import java.awt.RenderingHints;
 import java.io.*;
 import java.util.Properties;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+/**
+ * GUI to collect content information for use across Dove platform.
+ */
 @SuppressWarnings("serial")
 public class InfoMakerGUI extends JFrame {//add extends InfoMaker
 
-  /**
-   * @param args
-   */
   final int WINDOW_WIDTH = 420;
   final int WINDOW_HEIGHT = 360;
   private JPanel panel, prev;
@@ -32,7 +31,8 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
   private JButton bCreate, bPreview, bChoose, bCompress, bClear, bOutput;
   private JMenuBar menuBar;
   private JMenu fileMenu, actionMenu,helpMenu;
-  private JMenuItem iEdit, iImport, iSave, iSaveAs, iExit, iCreate, iPreview, iClear, iThumb, iOutput, iHelp, iAbout;
+  private JMenuItem iEdit, iImport, iSave, iSaveAs, iExit, iCreate, iPreview, 
+      iClear, iThumb, iOutput, iHelp, iAbout;
   private Dimension space = new Dimension(5, 0);
   private String outputDest;
   private Properties defaults;
@@ -40,10 +40,20 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
   private File infoCfg;
   //TODO fix resize texfields
   
+  /**
+   * General Constructor initializes GUI, fetches default values from program
+   * directory in user home directory. 
+   */
   public InfoMakerGUI(){
     this(new File(System.getProperty("user.home")
         + File.separator+".dove"+File.separator + "info.cfg"));
   }
+  
+  /**
+   * Selected Constructor initializes GUI, fetches default values from given 
+   *     configuration file.
+   * @param customInfo file 
+   */
   public InfoMakerGUI(File customInfo){
     infoCfg = customInfo;
     setTitle("Info Maker");
@@ -58,9 +68,16 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
     setVisible(true);
   }
   
+  /**
+   * Loads default entry values from default file: info.cfg
+   */
   private boolean loadDefaults(){
     return loadDefaults(infoCfg);
   }
+  
+  /**
+   * Loads default entry values from given info.cfg
+   */
   private boolean loadDefaults(File infoFile){
     if(infoFile.exists() && infoFile.canRead()){
       defaults = new Properties();
@@ -84,10 +101,17 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
     }
   }
   
+  /**
+   * Saves the currently entered data to info.cfg file.
+   */
   private boolean saveDefaults(){
     return saveDefaults(new File(System.getProperty("user.home")
           + File.separator+".dove"+File.separator + "info.cfg"));
   }
+  
+  /**
+   * Saves the currently entered data to a given file.
+   */
   private boolean saveDefaults(File config){
     try{
       //defaults.load(new FileInputStream("info.cfg"));
@@ -106,6 +130,9 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
     }
   }
   
+  /**
+   * Draws the main input panel. Collects information to be content data.
+   */
   private void buildPanel(){
     lMessage = new JLabel("Provide the following information about the content.");
     lName = new JLabel("Name:", JLabel.TRAILING);
@@ -238,6 +265,10 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
     bottom.add(Box.createHorizontalGlue());
     panel.add(bottom);
   }
+  
+  /**
+   * Clears all entered data from form.
+   */
   private void clearPanel(){
     tThumbStats.setText("N/A");
     tName.setText("");
@@ -253,6 +284,10 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
     cOther.setSelected(false);
     updatePanel();
   }
+  
+  /**
+   * Sets menubar at top of main input panel.
+   */
   private void buildMenubar(){
     menuBar = new JMenuBar();
     // File Menu
@@ -310,6 +345,9 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
     setJMenuBar(menuBar);
   }
   
+  /**
+   * Draw side window that show preview of data, from currently entered fields.
+   */
   private void buildPreview(){
     preview = new JFrame("Preview");
     preview.setSize(620, 380);
@@ -422,9 +460,18 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
     //preview.pack();
   }
   
+  /**
+   * 
+   */
+   //TODO update panel implement or delete.
   private void updatePanel(){
     //tThumb.revalidate();
   }
+  
+  /**
+   * Sets JLabel of filesize,  height and width of givel thumnail image.
+   * @param thumbfile file 
+   */
   private void updateThumbStats(File thumbFile){
     //File thumbFile = thumb.getSelectedFile();
     tThumb.setText(thumbFile.getAbsolutePath());
@@ -443,6 +490,11 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
     tThumbStats.setText(str+",  File Size: "+ len);
   }
   
+  /**
+   * Adds file separator to given string, unless last index is a file separator
+   * @param in given string
+   * @returns string with file separator at end
+   */
   private String addFileSeparator(String in){
     in += File.separator;
     String compare = File.separator + File.separator;
@@ -452,6 +504,10 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
       return in;
     }
   }
+  
+  /**
+   * Updates Output textfield when Name textfield losses focus. 
+   */
   private class NameFocusListener implements FocusListener{
     @Override
     public void focusGained(FocusEvent arg0) {}
@@ -459,18 +515,24 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
     public void focusLost(FocusEvent arg0) {
       if(cFolder.isSelected()){
         //Append to output String 
-        tOutput.setText(outputDest + File.separator	+ tName.getText() + File.separator);
+        tOutput.setText(outputDest + File.separator	+ tName.getText() 
+        + File.separator);
       }else{
         //clear from output string
         tOutput.setText(outputDest + File.separator);
       }	
     }
   }
+  
+  /**
+   * Updates Output textfield when Make Folder checkbox is ticked.
+   */
   private class MakeFolderListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       if(cFolder.isSelected()){
         //Append to output String 
-        tOutput.setText(outputDest + File.separator	+ tName.getText() + File.separator);
+        tOutput.setText(outputDest + File.separator	+ tName.getText() 
+        + File.separator);
       }else{
         //clear from output string
         tOutput.setText(outputDest + File.separator);
@@ -478,6 +540,9 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
     }
   }
   
+  /**
+   * Open a file browser to chose output location for content files.
+   */
   private class OutputLocationListener implements ActionListener{
     public void actionPerformed(ActionEvent e1) {
       JFileChooser loc = new JFileChooser();
@@ -494,6 +559,9 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
     }
   }
   
+  /**
+   * Runs checks of entered data and if successful creates files/folders.
+   */
   private class CreateButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e1) {
       boolean ready = true;
@@ -544,6 +612,9 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
     }
   }
   
+  /**
+   * Builds preview window and displays it. 
+   */
   private class PreviewButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       if(cFolder.isSelected()){
@@ -563,6 +634,9 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
     }
   }
   
+  /**
+   * Shows file browser to choose thumbnail image. Updates stats.
+   */
   private class ThumbButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       JFileChooser thumb = new JFileChooser();
@@ -591,6 +665,11 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
       tThumb.repaint();
     }
   }
+  
+  /**
+   * Runs compression on thumbnail image. Built- in 
+   * compression: "TYPE_4BYTE_ABGR"
+   */
   private class CompressImageListener implements ActionListener{
     public void actionPerformed(ActionEvent e){ 
       //TODO when finalized move code to InfoMaker.class
@@ -604,7 +683,8 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
           }else{
             h = img.getHeight()* w /img.getWidth();
           }
-        BufferedImage scaleBuff = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR);
+        BufferedImage scaleBuff = new BufferedImage(w, h, 
+            BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D g = scaleBuff.createGraphics();
         try{
           g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
@@ -617,8 +697,10 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
         File thumb = File.createTempFile("thumb", ".png");
         ImageIO.write(scaleBuff, "png", thumb);
         tThumb.setText(thumb.getAbsolutePath());
-        String len = Dove.humanReadableByteCount(new File(tThumb.getText()).length(), true);
-        String str = scaleBuff.getWidth()+"x"+scaleBuff.getHeight()+"  File Size: "+ len;
+        String len = Dove.humanReadableByteCount(
+            new File(tThumb.getText()).length(), true);
+        String str = scaleBuff.getWidth()+"x"+scaleBuff.getHeight() + 
+            "  File Size: "+ len;
         tThumbStats.setText("Width x Height: "+str);
       }catch(IOException io){
         //File not ready.
@@ -631,9 +713,11 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
     }
   }
   
+  /**
+   * Open data from data file for editing. Allow Overwrite later w/ new info.
+   */
   private class EditListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
-      //open data from data file and overwrite later w/ new info.
       JFileChooser choice = new JFileChooser(outputDest );
       choice.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
       choice.setDialogTitle("Chose content folder to edit.");
@@ -663,8 +747,9 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
           cOther.setSelected(load.getInfo().isOther());
         }catch (NullPointerException io){
           clearPanel();
-          JOptionPane.showMessageDialog(panel,"There is no data at this location.",
-                "Error", JOptionPane.ERROR_MESSAGE);
+          JOptionPane.showMessageDialog(panel,
+              "There is no data at this location.",
+              "Error", JOptionPane.ERROR_MESSAGE);
         }finally{
           setCursor(Cursor.getDefaultCursor());
         }
@@ -672,6 +757,10 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
       }
     }
   }
+  
+  /**
+   * Opens file chooser and reads a custom defaults file.
+   */
   private class ImportListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       JFileChooser choice = new JFileChooser(infoCfg );
@@ -704,11 +793,16 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
       }else{ //if(n == JFileChooser.CANCEL_OPTION) {
       }
     }
-  }*/
+  }
+*/
+  
+  /**
+   * Exports the entered data to a custom defaults file.
+   */
   private class ExportListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       if(e.getActionCommand().equals("save")){
-        String header = "Are you sure you want to save the enter info as defaults to:\n"+
+        String header = "Are you sure you want to save the entered info as defaults to:\n"+
             infoCfg.getAbsolutePath();
         String[] opts = {"Yes", "No"};
         int n = JOptionPane.showOptionDialog(null, header, "Save Defaults?", 
@@ -731,12 +825,19 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
       }
     }
   }
-
+  
+  /**
+   * Terminates program.
+   */
   private class ExitListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       System.exit(0);
     }
   }
+  
+  /**
+   * Launches Help window.
+   */
   private class HelpListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       JFrame help = new JFrame("Help Information");
@@ -745,6 +846,10 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
       help.setVisible(true);
     }
   }
+  
+  /**
+   * Launches About Window.
+   */
   private class AboutListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       //JFrame about = new JFrame("About InfoMaker");
@@ -756,6 +861,10 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
 
     }
   }
+  
+  /**
+   * Clear all entered data.
+   */
   private class ClearButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       // Erase all fields and clears tags
@@ -763,19 +872,30 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
     }
   }
   
+  /**
+   * Update preview window and redisplays.
+   */
   private class PreviewRefreshListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       preview.setVisible(false);
-      preview.removeAll();
+      preview.removeAll(); //TODO preview needs smoother update.
       buildPreview();
       preview.setVisible(true);
     }
   }
+  
+  /**
+   * Closes preview window.
+   */
   private class PreviewDoneListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       preview.dispose();
     }
   }
+  
+  /**
+   * Main method. 
+   */
   public static void main(String[] args){
     //config file as first arg; so configs can be loaded be shortcut
     if(args.length != 0 ){

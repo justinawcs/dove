@@ -3,25 +3,44 @@ import java.io.*;
 import java.util.ArrayList; 
 import java.util.Date;
 
+/**
+ * Maintains ContentItem objects, loads, sorts, searches, returns info
+ * @author Justin A. Williams
+ * @version 0.0.8
+ */
 public class Content {
   private File src; // the Source Folder;
   private boolean allowNoThumb = false; // true=ignore folders w/o thumb.ext
   private boolean searchFileNames;
-  private ContentItem[] items, master;
-  private int maxItems, itemCount; //counts loaded items 
-  private Filter filter;
+  private ContentItem[] items;  // ContentItems that are currently displayed
+  private ContentItem[] master; // All ContentItems
+  private int maxItems, itemCount; //counts loaded items //TODO: check usage
+  private Filter filter; //TODO: remove filter
   
-  
+  /**
+   * Class contructor that allows the setting of allowsNoThumbs to skip 
+   * ContentItems without thumbnail imagaes
+   * @param s absolute Source folder location given as String
+   * @param allowsNoThumbs to use thumbnail-less ContentItems set true
+   */
   public Content(String s,  boolean allowsNoThumbs){
     allowNoThumb = allowsNoThumbs;
     src = new File(s);
     reload();
   }
+  
+  /**
+   * Class contructor that takes the Source location as a String 
+   * @param s absolute Source folder location given as String
+   */
   public Content(String s){
     src = new File(s);
     reload();
   }
   
+  /**
+   * Reads from Source folder and populates ContentItem arrays (items, master)
+   */
   public void reload(){
     File[] temp = src.listFiles();
     maxItems = temp.length;
@@ -36,9 +55,21 @@ public class Content {
     prune();
     master = items;
   }
+  
+  /**
+   * Resets selective items list to master array, this prevents having to 
+   * reload() so often
+   */
   public void refresh(){
     items = master; 
   }
+  
+  /**
+   * Removes ContentItems that either have no Dove data, or are do not contain 
+   * required thumbnail Images
+   * @see ContentItem.hasData()
+   * @see allowNoThumb
+   */
   private void prune(){
     ArrayList<ContentItem> hold = new ArrayList<ContentItem>(); 
     for(int i=0; i<items.length;i++){
@@ -53,6 +84,9 @@ public class Content {
     }
   }
   
+  /**
+   * Sorts ContentItems in items array alphabetically.
+   */
   public void sortAZ(){
     int scan;
     int i;
@@ -62,7 +96,8 @@ public class Content {
       min = scan;
       minVal = items[scan];
       for(i = scan; i<items.length;i++){
-        if(items[i].getFile().getName().compareTo(minVal.getFile().getName()) < 0){
+        if(items[i].getFile().getName().compareTo(
+              minVal.getFile().getName()) < 0){
           minVal = items[i];
           min = i;
         }
@@ -72,6 +107,9 @@ public class Content {
     }
   }
   
+  /**
+   * Sorts ContentItems in items array by Date.
+   */
   public void sortDate(){
     int scan;
     int i;
@@ -91,6 +129,9 @@ public class Content {
     }
   }
   
+  /**
+   * Sorts ContentItems in items array by sizes.
+   */
   public void sortSize(){
     int scan;
     int i;
@@ -109,6 +150,10 @@ public class Content {
       items[scan] = minVal;
     }
   }
+  
+  /**
+   * Sorts ContentItems in items array by tags.
+   */
   public void sortTags(){
     int scan;
     int i;
@@ -128,6 +173,9 @@ public class Content {
     }
   }
   
+  /**
+   * Reverses the current sorts of ContentItems in items array.
+   */
   public void reverse(){
     ContentItem l[] = new ContentItem[items.length];
     for(int i=0; i<items.length; i++){
@@ -135,12 +183,20 @@ public class Content {
     }
     items = l;
   }
+  
+  /**
+   * Searches for given string in info of ContentItems.
+   * @param search will look for this exact sequence of letters
+   */
   public void search(String search){
     search(search, searchFileNames);//refers to settings
   }
-  public void searchFilenames(String search){
-    search(search, true);//forces filename search
-  }
+  
+  /**
+   * Searches for given string in info and possibly filenames of ContentItems
+   * @param search will look for this exact sequence of letters
+   * @param searchFileNames true searches filenames also, takes longer
+   */
   public void search(String search, boolean searchFileNames){
     search = search.trim();
     // if search is in any part of given then add to list
@@ -162,6 +218,22 @@ public class Content {
       items[j] = hold.get(j);
     }
   }
+  
+  /**
+   * Searches for given string in info and filenames of ContentItems
+   * @param search will look for this exact sequence of letters
+   */
+  public void searchFilenames(String search){
+    search(search, true);//forces filename search
+  }
+  
+  /**
+   * Recursive search function looking for exact string in filenames of given 
+   * folder location. Traverses files  in all folder below until found.
+   * @param search will look for this exact sequence of letters
+   * @param f folder to be searched for string
+   * @returns true if search string is found
+   */
   private boolean searchDive(String search, File f){
     //Searches the filenames in items[], recursively,    
     search = search.trim();
@@ -181,12 +253,18 @@ public class Content {
     }
   }
   
+  /**
+   * Searches for string sequnece in given string, 
+   * @param search  will look for this exact sequence of letters
+   * @param given will be searched for 'search'
+   * @return true if search is found in given
+   */
   public boolean seeker(String search, String given){
     if(given.length() < search.length() ){
       return false;
     }else if( given.equalsIgnoreCase(search)){
       return true;
-    }
+    }//TODO check code here, is for loop necessary?
     for(int i = 0; i < given.length() - search.length(); i++ ){
       if(given.toLowerCase().contains(search.toLowerCase() ) ){
         return true;
@@ -195,9 +273,23 @@ public class Content {
     return false;
   }
   
+  /**
+   * Using the given tags, any ContentItems that matches with any of the given 
+   * tag will be added to items array. Non matching will be ignored, leaving 
+   * only matches.
+   * @deprecated non-intuitive, invoke an arbitray user choice
+   * @see tags(...)
+   * @param vid Contains Video
+   * @param aud Contains Audio
+   * @param mus Contains Music
+   * @param doc Contains Documents
+   * @param pic Contains Pictures
+   * @param other Contains Other data
+   */
+  @Deprecated
   public void tagsAny(boolean vid, boolean aud, boolean mus, 
       boolean doc, boolean pic, boolean other){
-    // if ANY tags that are true are in item then add to list
+    //
     ArrayList<ContentItem> hold = new ArrayList<ContentItem>(); 
     boolean tags[] = {vid, aud, mus, doc, pic, other};
     
@@ -221,6 +313,20 @@ public class Content {
     }
   }
 
+  /**
+   * Using the given tags, any ContentItems that matches with all of the given 
+   * tag will be added to items array. Non matching will be ignored, leaving 
+   * only matches.
+   * @deprecated non-intuitive, invoke an arbitray user choice
+   * @see tags(...)
+   * @param vid Contains Video
+   * @param aud Contains Audio
+   * @param mus Contains Music
+   * @param doc Contains Documents
+   * @param pic Contains Pictures
+   * @param other Contains Other data
+   */
+  @Deprecated
   public void tagsAll(boolean vid, boolean aud, boolean mus, 
       boolean doc, boolean pic, boolean other){
     // if ALL tags that are true are in item then add to list
@@ -246,6 +352,17 @@ public class Content {
     }
   }
   
+  /**
+   * Using the given tags, any ContentItems that matches with any of the given 
+   * tag will be added to items array. Non matching will be ignored, leaving 
+   * only matches. 
+   * @param vid Contains Video
+   * @param aud Contains Audio
+   * @param mus Contains Music
+   * @param doc Contains Documents
+   * @param pic Contains Pictures
+   * @param other Contains Other data
+   */
   public void tags(boolean vid, boolean aud, boolean mus, 
       boolean doc, boolean pic, boolean other){
     //
@@ -263,9 +380,11 @@ public class Content {
       int t=0;
       while(!exit && t<tags.length){
         //for(int t=0; t<tags.length; t++){
+        //count number of matching tags
         if(tags[t] == true && temp[t] == true ){
           found++;
         }
+        //when tag count matches, add to list
         if(found == count){
           hold.add( items[i] );
           exit = true;
@@ -273,6 +392,7 @@ public class Content {
         t++;
       }
     }
+    //load hold into items array
     hold.trimToSize();
     items = new ContentItem[hold.size()];
     for(int j=0;j<items.length;j++){
@@ -280,6 +400,9 @@ public class Content {
     }
   }
   
+  /**
+   * Items array will only contain ContentItems that have thumbnail images.
+   */
   public void onlyThumbs(){
     ArrayList<ContentItem> hold = new ArrayList<ContentItem>(items.length); 
     for(int i=0; i<items.length;i++){
@@ -294,45 +417,122 @@ public class Content {
       items[j] = hold.get(j);
     }
   }
+  
+  /**
+   * Returns Content folder File object 
+   * @returns Content File folder
+   */
   public File getSrc(){
     return src;
   }
+  
+  /**
+   * Returns ContentItem at given items array index
+   * @param i index
+   * @returns given ContentItem
+   */
   public ContentItem getItemAt(int i){
     return items[i];
   }
+  
+  /**
+   * Returns ContentItem File object at given items array index
+   * @param i index
+   * @returns given ContentItem File Object
+   */
   public File getFileAt(int i){
     return items[i].getFile();
   }
+  
+  /**
+   * Returns ContentItem total filesize at given items arrat index
+   * @param i index
+   * @returns Long filesize
+   */
   public long getSizeAt(int i){
     return items[i].getSize();
   }
+  
+  /**
+   * Returns ContentItem date of creation at given items array index
+   * @param i index
+   * @returns Date object
+   */
   public Date getDateAt(int i){
     return items[i].getDate();
   }
+  
+  /**
+   * Returns ContentItem Info object at given items array index
+   * @param i index
+   * @returns Info object
+   */
   public Info getInfoAt(int i){
     return items[i].getInfo();
   }
+  
+  /**
+   * Returns String-Type ArrayList of all filenames within a given items array
+   * index
+   * @param i index
+   * @returns String type ArrayList
+   */
   public ArrayList<String> getNamesAt(int i){
     return items[i].getNames();
   }
+  
+  /**
+   * Returns number of items currently in items array
+   * @returns integer
+   */
   public int getLength(){
     return items.length;
   }
+  
+  /**
+   * Returns number of all ContentItems
+   * @returns int
+   */
   public int getMaxItems() {
     return maxItems;
   }
+  
+  /**
+   * Returns number of displayed ContentItems
+   * @returns int
+   */
   public int getItemCount() {
     return itemCount;
   }
+  
+  /**
+   * Returns true if ContentItems without thumbnail images will be displayed, 
+   * else false
+   * @returns boolean
+   */
   public boolean isAllowNoThumb() {
     return allowNoThumb;
   }
+  
+  /**
+   * Sets thumbnail image policy, true if ContentItems without thumbs will be 
+   * allows, else false
+   */
   public void  setAllowNoThumb(boolean b){
     allowNoThumb = b;
   }
+  
+  /**
+   * Set search filenames policy, true allows searching filenames in addition 
+   * to info data. Searches all files names in ContentItem.
+   */
   public void setSearchFileNames(boolean b){
     searchFileNames = b;
   }
+  
+  /**
+   * Returns string of relevant Class data
+   */
   public String toString(){
     String temp = src.getAbsolutePath() + "\n";
     for(int i=0;i<items.length;i++){
@@ -342,6 +542,8 @@ public class Content {
     }
     return temp; 
   }
+  
+  //TODO: Check usage, remove?
   private class Filter{
     //boolean isSearch;
     String search;

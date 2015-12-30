@@ -3,15 +3,31 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Detects if changes have been made to drives on system using the dmesg 
+ * commmand in Linux. Drive changes could be insertion or removal of a device,
+ * on detection on either boolean flag changed will turn true. The time string 
+ * is logged to check for updates. An arraylist of of changes is kept.
+ * @author Justin Williams
+ * @version 0.0.8
+ */
 public class KernelMesg {
   private boolean changed = true; //changeDetected
   private String lastTime = null; //time from last line of last update
   private ArrayList<String> list;
+  
+  /**
+   * Constructor: Starts log of system messages.
+   */
   public KernelMesg(){
     changed = update();
     System.out.println("Data changed: " + changed);
-    
   }
+  
+  /**
+   * Updates by pulling message log and comparing it to last pull.
+   * @returns true if changes to drive were made.
+   */ 
   public boolean update(){
     ArrayList<String> temp = new ArrayList<String>() ;
     ArrayList<String> tempNewOnly = new ArrayList<String>();
@@ -58,18 +74,24 @@ public class KernelMesg {
     return changeDetected;
   }
   
+  /**Returns true if message log changed.*/
   public boolean isChanged(){
     return changed;
   }
   
+  /**Returns string of last time reported by message log.*/
   public String getLastTime(){
     return lastTime;
   }
   
+  /**Returns arraylist of changes to kernel logs.*/
   public ArrayList<String> getList(){
     return list;
   }
-
+  
+  /**
+   * Returns arraylist of new lines from kernel logs.
+   */
   private static ArrayList<String> execBash() throws IOException{
     final String com = "dmesg | grep -i 'usb' ";
     // file:  /var/log/dmesg
@@ -105,6 +127,11 @@ public class KernelMesg {
     }
     return data;
   }
+  
+  /**
+   * Main method: a built-in tester that will show if changes of drive insertion
+   * and/or removal are properly reported, an interactive commandline. 
+   */
   public static void main(String[] args){
     /*try {
       execBash();

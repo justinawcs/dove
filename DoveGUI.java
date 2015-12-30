@@ -40,7 +40,9 @@ import java.util.concurrent.ExecutionException;
 import java.io.IOException;
 
 /**
- * @author jaw
+ * Main GUI class. Handles mounting, selection, copying.
+ * @author Justin Williams
+ * @version 0.0.8
  *
  */
 @SuppressWarnings("serial")
@@ -89,6 +91,9 @@ public class DoveGUI extends Dove{
   private final DecimalFormat form = new DecimalFormat("#0.00");
   private final DecimalFormat perc = new DecimalFormat("#0.00%");
   
+  /**
+   * Constuctor: Loads files, starts GUI.
+   */
   public DoveGUI(){
     //start splash
     startSplash();
@@ -123,6 +128,9 @@ public class DoveGUI extends Dove{
     splash.dispose();
   }
   
+  /**
+   * Shows simple splash ticker while files are being read.
+   */
   public void startSplash(){
     splash = new JWindow();
     JPanel panel = new JPanel(new BorderLayout());
@@ -145,6 +153,9 @@ public class DoveGUI extends Dove{
     //loader.doInBackground();
   }
   
+  /**
+   * Creates welcome page.
+   */
   public void makeWelcome(){
     welcomeCard = new JPanel();
     welcomeCard.setLayout(new BorderLayout(10,10));
@@ -179,6 +190,9 @@ public class DoveGUI extends Dove{
     welcomeCard.add(option, BorderLayout.SOUTH);
   }
   
+  /**
+   * Creates Drive selection page.
+   */
   public void makeDrive(){
     //show drive choice: 
     driveCard = new JPanel();
@@ -257,6 +271,9 @@ public class DoveGUI extends Dove{
   }
  */
   
+  /**
+   * Creates sidebar, for searching and ordering.
+   */
   public void makeSidebar(){
     sidebar = new Box(BoxLayout.PAGE_AXIS);
     sidebar.setBorder(BorderFactory.createEmptyBorder(0,10,0,10) );
@@ -389,6 +406,9 @@ public class DoveGUI extends Dove{
     selectCard.add(sidebar);
   }
   
+  /**
+   * Creates informational topbar.
+   */
   public void makeTopBar(){
     //Information Current Status & help
     //# items found, search term, sorted by, of type __
@@ -479,6 +499,11 @@ public class DoveGUI extends Dove{
     panel.add(botBar, BorderLayout.SOUTH);
   }
   
+  /**
+   * Creates main selction panel, starting at given index.
+   * @param start index, 0 = first
+   */
+   //TODO rename makeGrid
   public void makeMain(int start){
     // Big Grid 2x3: Locked Size
     // Grid 1x4: NavButtons Below Prev, Next, First, Last 
@@ -523,6 +548,12 @@ public class DoveGUI extends Dove{
     selectCard.add(center);
   }
   
+  /**
+   * Make content page from given ContentItem.
+   * @param peek ContentIte data requested
+   * @param bookmarkIndex - current index to return user to same location in 
+   *    selection panel.
+   */
   public void makeContent(ContentItem peek, int bookmarkIndex){
     //Shows selected item info and choice to add to list
     contentCard = new JPanel();
@@ -625,6 +656,10 @@ public class DoveGUI extends Dove{
     contentCard.add(option, BorderLayout.SOUTH);
   }
   
+  /**
+   * Creates list window of all items that will be copied. Think shopping cart
+   * window.
+   */ 
   public void makeList(){
     listCard = new JPanel();
     listCard.setLayout(new BorderLayout(10,10));
@@ -726,6 +761,10 @@ public class DoveGUI extends Dove{
     listCard.add(option, BorderLayout.SOUTH);
   }
   
+  /**
+   * Creates Copy window to run final checks before copying and allowing copying
+   * if ready.
+   */ 
   public void makeCopy(){
     copyCard = new JPanel();
     copyCard.setLayout(new BorderLayout(05,10) );
@@ -853,6 +892,9 @@ public class DoveGUI extends Dove{
     copyCard.add(option, BorderLayout.SOUTH);	
   }
   
+  /**
+   * Creates search panel to how large search bar.
+   */
   public void makeSearch(){
     searchCard = new JPanel();
     searchCard.setLayout(new BorderLayout(10,10));
@@ -890,6 +932,10 @@ public class DoveGUI extends Dove{
     //searchCard.add(stuff);
   }
   
+  /**
+   * Updates main/grid at given bookmarkIndex.
+   * @param start bookmarkIndex
+   */
   private void updateGrid(int start){
     try{
       center.invalidate();
@@ -959,6 +1005,9 @@ public class DoveGUI extends Dove{
     //updatePager();
   }
   
+  /**
+   * Update Navigation page display.
+   */
   private void updatePager(){
     //Idea: Change to DropDownList for non-kiosk uses.
     //pageList;
@@ -987,6 +1036,9 @@ public class DoveGUI extends Dove{
     //lPager.setText(bPager.getText());
   }
   
+  /**
+   * Updates navigation buttons used on Main/Grid to change pages.
+   */
   private void updateNav(){
     if(bookmark+PAGE_SIZE >= getSource().getLength() ){
       bNext.setEnabled(false);
@@ -1005,6 +1057,9 @@ public class DoveGUI extends Dove{
     updatePager();
   }
   
+  /**
+   * Updates the status tring visible in to header, used to inform of settings.
+   */
   private void updateStatus(){
     int i = getSource().getLength();
     int higher = i<bookmark+PAGE_SIZE ? i : bookmark + PAGE_SIZE;
@@ -1075,7 +1130,12 @@ public class DoveGUI extends Dove{
       .substring(0, 5) + "%" );
       afterBar.setStringPainted(true);
   */
-    }
+  }
+  
+  /**
+   * Updates Drivelist dropbox to currently available drives.
+   */
+   @Deprecated
   private void updateDriveList(){
     String[] arr = getDevices().getInfoArray();
     String[] done = new String[arr.length +1];
@@ -1090,6 +1150,10 @@ public class DoveGUI extends Dove{
     //driveList.addActionListener(new DriveListListener() );
     //driveList.setPreferredSize(new Dimension(50, 0) );
   }
+  
+  /**
+   * Returns tag string of currently selected tags.
+   */
   private String getTags(){
     String hold = "Searching for " + 
   /*(bTagsANY.isSelected() ? "any":"all") */ "any"+ 
@@ -1104,6 +1168,9 @@ public class DoveGUI extends Dove{
     return temp;
   }
   
+  /**
+   * Sorts the main/grid by the last used sorting type.
+   */
   private void sortLast(){
     //System.out.println("Sort ordinal - " +sort.ordinal() );
     switch(sort.ordinal()){
@@ -1134,6 +1201,10 @@ public class DoveGUI extends Dove{
       getSource().reverse();
     }
   }
+  
+  /**
+   * Filters ContentItems and updates main/grid with items.
+   */
   private void filter(){
     getSource().refresh();
     if(isThumbsOnly){
@@ -1181,7 +1252,10 @@ public class DoveGUI extends Dove{
   private void chunkCopy(File src, File tgt) throws IOException {
     
   }
-  
+
+  /**
+   * Searches for given text and closes search card.
+   */
   private class SearchTextFieldListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       isSearch = true;
@@ -1202,6 +1276,10 @@ public class DoveGUI extends Dove{
       cards.first(cardPanel);
     }
   }
+  
+  /**
+   * Shows search card to search for text.
+   */
   private class SearchButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       makeSearch();
@@ -1228,6 +1306,11 @@ public class DoveGUI extends Dove{
     }
   }
   
+  /**
+   * Clears search field on user interface.
+   * @deprcated with removal of search bar from sidebar interface.
+   */
+  @Deprecated 
   private class SearchClearButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       //tSearch.setText(null);
@@ -1238,9 +1321,12 @@ public class DoveGUI extends Dove{
       updateStatus();
       updateGrid(0);
       updateNav();
-      
     }
   }
+  
+  /**
+   * Updates grid if thumbnails without images whoud be displayed.
+   */
   private class ThumbsOnlyButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       if(cThumbsOnly.isSelected()){//Show Thumbs Only = true
@@ -1256,6 +1342,9 @@ public class DoveGUI extends Dove{
       updateNav();
     }
   }
+  /**
+   * Sorts grid alpabetically.
+   */
   private class AZButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       getSource().sortAZ();
@@ -1265,6 +1354,10 @@ public class DoveGUI extends Dove{
       updateNav();
     }
   }
+  
+  /**
+   * Sorts grid reverse-alpabetically.
+   */
   private class ZAButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       getSource().sortAZ();
@@ -1275,6 +1368,10 @@ public class DoveGUI extends Dove{
       updateNav();
     }
   }
+  
+  /**
+   * Sorts grid by newest first.
+   */
   private class NewButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       getSource().sortDate();
@@ -1285,6 +1382,10 @@ public class DoveGUI extends Dove{
       updateNav();
     }
   }
+  
+  /**
+   * Sorts grid by oldest first.
+   */
   private class OldButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       getSource().sortDate();
@@ -1294,6 +1395,10 @@ public class DoveGUI extends Dove{
       updateNav();
     }
   }
+  
+  /**
+   * Sorts grid by smallest first.
+   */
   private class SmallButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       getSource().sortSize();
@@ -1303,6 +1408,10 @@ public class DoveGUI extends Dove{
       updateNav();
     }
   }
+  
+  /**
+   * Sorts grid by largest first.
+   */
   private class LargeButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       getSource().sortSize();
@@ -1324,7 +1433,11 @@ public class DoveGUI extends Dove{
       //reload
     }
   }*/
-  //TODO fix
+  
+  /**
+   * Filters by selected tags.
+   */
+  //TODO is fixed??
   private class FindTagsButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       getSource().refresh();
@@ -1381,6 +1494,10 @@ public class DoveGUI extends Dove{
       updateNav();
     }
   }
+  
+  /**
+   * Clears tags.
+   */
   private class ClearTagsButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       cVid.setSelected(false);
@@ -1399,6 +1516,9 @@ public class DoveGUI extends Dove{
     }
   }
   
+  /**
+   * Resets/clears all filters.
+   */
   private class ClearAllButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       getSource().refresh();
@@ -1410,6 +1530,10 @@ public class DoveGUI extends Dove{
       updateNav();
     }
   }
+  
+  /**
+   * Shows help window.
+   */
   private class HelpButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       //TODO display help panel. ??? web call
@@ -1419,6 +1543,10 @@ public class DoveGUI extends Dove{
       cards.show(cardPanel, "welcome");
     }
   }
+  
+  /**
+   * Shows welcome page.
+   */
   private class WelcomeButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       makeWelcome();
@@ -1427,6 +1555,9 @@ public class DoveGUI extends Dove{
     }
   }
   
+  /**
+   * Shows drive selection page.
+   */
   private class DriveButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       makeDrive();
@@ -1435,6 +1566,9 @@ public class DoveGUI extends Dove{
     }
   }
   
+  /**
+   * Refreshes available drives.
+   */
   private class DriveRefreshListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       try{
@@ -1446,6 +1580,9 @@ public class DoveGUI extends Dove{
     }
   }
   
+  /**
+   * Mounts and unmounts from drivelist dropdownbox. 
+   */
   private class DriveListListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       lWarn.setText("");
@@ -1474,6 +1611,10 @@ public class DoveGUI extends Dove{
       //TODO add refresh page, get card name and redraw card
     }
   }
+  
+  /**
+   * Mounts/unmounts given index. Pass index as an actionCommand.
+   */
   private class DriveMountListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       int index = Integer.parseInt(e.getActionCommand() );
@@ -1497,6 +1638,9 @@ public class DoveGUI extends Dove{
     }
   }
   
+  /**
+   * Shows content card for given item. Pass item index as actionCommand.
+   */
   private class ItemButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       //System.out.println(e.getActionCommand());
@@ -1515,6 +1659,10 @@ public class DoveGUI extends Dove{
       updateBars();
     }
   }
+  
+  /**
+   * Shows list page.
+   */
   private class ListButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       undoList = new ArrayList<ContentItem>(list) ;
@@ -1530,6 +1678,9 @@ public class DoveGUI extends Dove{
     }
   }
   
+  /**
+   * Shows copy page.
+   */
   private class CopyButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       makeCopy();
@@ -1541,6 +1692,10 @@ public class DoveGUI extends Dove{
       cards.show(cardPanel, "copy");
     }
   }
+  
+  /**
+   * Copies all selected ContentItems.
+   */
   private class FinalCopyButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       //((JButton)e.getSource()).setText("Now copying...");
@@ -1574,6 +1729,10 @@ public class DoveGUI extends Dove{
       
     }
   }
+  
+  /**
+   * Copy worker. Updates GUI, copied files.
+   */
   private class Task extends SwingWorker<Void, Void>{
     @Override
     public Void doInBackground(){
@@ -1615,7 +1774,6 @@ public class DoveGUI extends Dove{
     }
   }
   
-  
   private class CopyWorker extends SwingWorker<Boolean, Long>{
     //long copiedBytes = 0L;
     public Boolean doInBackground(){ //In a Thread
@@ -1636,7 +1794,10 @@ public class DoveGUI extends Dove{
       
     }
   }
-  
+
+  /**
+   * Makes changes to update progress on GUI.
+   */
   private class ProgressChangeListener implements PropertyChangeListener{
     public void propertyChange(PropertyChangeEvent evt) {
       int progress = (Integer) evt.getNewValue();
@@ -1649,12 +1810,19 @@ public class DoveGUI extends Dove{
     }
   }
   
+  /**
+   * Sets up dove folder on drive.
+   */
   private class DoveButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       getDevices().getMountedDrive().setupDrive();
       //Update list window.
     }
   }
+  
+  /**
+   * Navigates grid by given string actionCommands.
+   */
   private class NavButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       String nav = e.getActionCommand();
@@ -1703,6 +1871,9 @@ public class DoveGUI extends Dove{
     }
   }
   
+  /**
+   * Returns to previous page. Destroys current page.
+   */
   private class BackButtonListener implements ActionListener{
     //TODO NOTE: track objects in cardpanel
     public void actionPerformed(ActionEvent e){
@@ -1722,6 +1893,11 @@ public class DoveGUI extends Dove{
       updateBars();
     }
   }
+  
+  /**
+   * Adds selected ContentItem to list to be added to drive.
+   * Passed as actionCommand.
+   */
   private class AddButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       int opt = Integer.parseInt(e.getActionCommand());
@@ -1734,6 +1910,9 @@ public class DoveGUI extends Dove{
     }
   }
   
+  /**
+   * Remove selected ContentItem from drive. Passed as actionCommand.
+   */
   private class RemoveButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       ((JComponent) e.getSource()).getParent().setVisible(false);
@@ -1751,6 +1930,10 @@ public class DoveGUI extends Dove{
       cards.show(cardPanel, "list");
     }
   }
+  
+  /**
+   * Resets list chagnes as were set on list page creation.
+   */
   private class UndoButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       //System.out.println(undoList.toString());
@@ -1769,6 +1952,11 @@ public class DoveGUI extends Dove{
       cards.show(cardPanel, "list");
     }
   }
+  
+  /**
+   * Removes duplicate ContentItems from list.
+   */
+   //TODO add this method to Dove.java
   private class RemoveDuplicateButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       for(int i=0; i<list.size(); i++){
@@ -1789,6 +1977,10 @@ public class DoveGUI extends Dove{
       cards.show(cardPanel, "list");
     }
   }
+  
+  /**
+   * Unmounts drive and resets stats for another use.
+   */
   private class RemoveDeviceButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       getDevices().unmount();
@@ -1799,6 +1991,10 @@ public class DoveGUI extends Dove{
       
     }
   }
+  
+  /**
+   * Main method.
+   */
   public static void main(String[] args) {
     new DoveGUI();
   } 

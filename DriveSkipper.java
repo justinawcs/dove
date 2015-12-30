@@ -1,9 +1,21 @@
 import java.io.*;
 import java.util.ArrayList;
 
-
+/**
+ * Process 'skippedDrives' to remove unneccessary drives from possible 
+ * mountable drives. 
+ * Reads per line, excluding #comments and wraps grep around strings to remove 
+ * call uuids
+ * -skipped File lists drive to be skipped by UUID
+ * -excludeList holds result string
+ * -excludeArray holds result array
+ * -DEFAULTS defaults to skipping only the swap file
+ * -DEFAULTS_ARRAY defaults to skipping only the swap file
+ * @author Justin Williams
+ * @version 0.0.8
+ */
 public class DriveSkipper{
-  //process skippedDrives file per line excluding # comment lines and wrap grep around strings to remove call uuids
+  //TODO auto skip drive that contains root or similar
   /*
    * //blkid -c /dev/null | grep -v -e '/dev/sda' -e '/dev/sdb'
     //fdisk -l | grep 'Disk /' | grep -v -e '/dev/sda' -e '/dev/sdb'
@@ -16,6 +28,10 @@ public class DriveSkipper{
   private final String DEFAULTS = " | grep -v -e 'TYPE=\"swap\"'";
   private final String[] DEFAULTS_ARRAY = {"TYPE=\"swap\""};
   
+  /**
+   * Process 'skippedDrives' to remove unneccessary drives from possible 
+   * mountable drives. 
+   */
   public DriveSkipper(){
     try{//attempt load skippedfile
       FileReader reader = new FileReader(System.getProperty("user.home")
@@ -49,6 +65,11 @@ public class DriveSkipper{
     }
   }
   
+  /**
+   * Format given list of uuids into grep-friendly string
+   * @param exlist array of uuids
+   * @returns string result
+   */
   private String formatList(String[] exList){
     //" | grep -v -e '/dev/sda' -e '/dev/sdb'")
     String hold = " | grep -v"; 
@@ -57,12 +78,18 @@ public class DriveSkipper{
     }
     return hold;
   }
+  
+  /**
+   * Returns grep-ready exlude list string.
+   */
   public String getExcludeString(){
     return excludeList;
   }
+  
+  /**
+   * Reurns grep-ready exlude string array.
+   */
   public String[] getExcludeArray(){
     return excludeArray;
   }
-  
-  
 }

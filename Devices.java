@@ -7,7 +7,25 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.io.InputStream;
 
-
+/**
+ * Manages the finding and mounting filesystem to export Content into
+ * @author Justin A. Williams
+ * @version 0.0.8
+ * 
+ * - BLKID_CMD "blockid" linux command line program that prints drive info
+ *     with a focus on:
+ * - FDISK_CMD "fix Disk" linux command line program that print drive info
+ *     with a focus on:
+ * - mountLocation Disk Drive directory where the selected drives will be
+ *     mounted
+ * - grepExcludes string of drives that need to be removed from results of
+ *     bklid command
+ * - folderName given name of Content folder on device, on root of device
+ *     example: MyDrive(E:)/Dove/ 
+ * - mounted boolean, true if a device item has been mounted
+ * - devs DeviceItem Array holds data of individual mountable devices
+ * - drv holds inforamtion about currently mounted device
+ */
 public class Devices {
   private final static String BLKID_CMD = "blkid -c /dev/null";
   private final static String FDISK_CMD = "fdisk -l | grep 'Disk /'";
@@ -19,11 +37,19 @@ public class Devices {
   private DeviceItem[] devs;
   private Drive drv;
 
-  
-  public Devices(String mountLoc, String grepEx, String name){
+  /**
+   * Constructor: Creates and fills list of mountable devices.
+   * @param mountLoc Disk Drive directory where the selected drives will be
+   *     mounted 
+   * @param grepEx string of drives that need to be removed from results of
+   *     bklid command
+   * @param name given name of Content folder on device, on root of device
+   *     example: MyDrive(E:)/Dove/
+   */
+  public Devices(String mountLoc, String grepEx, String folder){
     mountLocation = mountLoc;
     grepExcludes = grepEx;
-    folderName = name;
+    folderName = folder;
     mounted = null;
     try{
       refresh();
@@ -32,6 +58,11 @@ public class Devices {
     }
   }
   
+  /**
+   * Executes bash commands and only returns outputs/results as String array. 
+   * @param com command line as passed to shell
+   * @return String array of command-line output/results
+   */
   private static String[] execBash(String com) throws IOException{
     //create bash class to access p.stuff and prebuffer the data
     Process p = Runtime.getRuntime().exec(new String[] {
@@ -62,6 +93,12 @@ public class Devices {
     return out;
   }
   
+  /**
+   * Executes bash commands and returns exit value/code from given commmands, 
+   * prints more information. 
+   * @param com command line as passed to shell
+   * @return exit code value of command
+   */
   private static int execBashVerbose(String com) throws IOException{
     System.out.println(com);
     Process p = Runtime.getRuntime().exec(new String[] {
@@ -92,6 +129,11 @@ public class Devices {
     return p.exitValue();
   }
   
+  /**
+   * Returns value of InputStream as a single string.
+   * @param in InputStream
+   * @returns String containing all data InputStream
+   */
   private static String streamReader(InputStream in) {
     InputStreamReader inReader = new InputStreamReader(in);
     BufferedReader bufferedReader = new BufferedReader(inReader);
@@ -108,6 +150,9 @@ public class Devices {
     return hold;
   }
   
+  /**
+   * Pulls infomation about available devices and generates list of valid ones.
+   */
   public void refresh() throws IOException{
     //TODO Disable permanent devices or implement
     // run commands and pipe output to Devices(blkid,fdisk) 
@@ -164,11 +209,17 @@ public class Devices {
     }
     System.out.println("[Devices.refresh] "+ toString() );
   }
+  
+  /**
+   * Mounts device by given integer.
+   * @param array index of device
+   * @returns boolean successful
+   */
   public boolean mount(int index){
     //mount command
     if(isMounted()){
       unmount();
-    }
+    }//TODO fix boolean succesful checks
     if(devs[index].isPermanent == false){
       try{
         execBash("mkdir " + mountLocation);
@@ -214,6 +265,10 @@ public class Devices {
   }
   
   //TODO decide unmount all on launch??
+  /**
+   * Unmounts currently mounted device.
+   * @returns boolean successful
+   *///TODO fix boolean successful
   public boolean unmount(){
     //unmount mounted drive
     if(getMounted().isPermanent() == false){
@@ -234,10 +289,18 @@ public class Devices {
     return true;
   }
 
+  /**
+   * Returns true if a device is mounted.
+   * @returns boolean isMounted
+   */
   public boolean isMounted(){
     return (mounted != null);
   }
 
+  /**
+   * Returns currently mounted DeviceItem.
+   * @returns mounted DeviceItem
+   */
   public DeviceItem getMounted(){
     if(mounted != null){
       return devs[mounted];
@@ -245,6 +308,11 @@ public class Devices {
       return null;
     }
   }
+  
+  /**
+   * Returns the index that currently mounted device is in Device array.
+   * @returns int array index
+   */
   public int getMountedIndex(){
     if(mounted != null){
       return mounted;
@@ -252,17 +320,43 @@ public class Devices {
       return -1;
     }
   }
+  
+  /**
+   * Returns currently mounted device's Drive object which gives information 
+   * about the connected drive.
+   * @returns Drive 
+   */
   public Drive getMountedDrive(){
     return drv;
   }
 
+  /**
+   * Creates a Device and adds it to array. Very useful in testing.
+   * @param loc absolute path to device
+   * @param lbl label, name of device
+   * @param sz size of device
+   */
   public void addDevice(String loc, String lbl, String sz){
     //ex. DeviceItem more = new DeviceItem("/tmp/ramdisk/","Ramdisk","16M");
     deviceAdder(new DeviceItem(loc, lbl, sz) );
   }
+  
+  /**
+   * Creates a Device and adds it to array. Very useful in testing.
+   * @param loc absolute path to device
+   * @param lbl label, name of device
+   * @param sz size of device
+   * @param perm boolean true for permanent Device that will not unmount
+   */
+   //Implement or delete
   public void addDevice(String loc, String lbl, String sz, boolean perm){
     deviceAdder(new DeviceItem(loc, lbl, sz, perm) );
   }
+  
+  /**
+   * Creates a Device and adds it to array. Very useful in testing.
+   * @param given DeviceItem to be added
+   */
   private void deviceAdder(DeviceItem given){
     DeviceItem[] temp = new DeviceItem[devs.length+1];
     temp[0] = given;
@@ -272,6 +366,11 @@ public class Devices {
     devs = temp;
   }
   
+  /**
+   * Returns array containing strings that carry the name and size information
+   * of available devices.
+   * @returns String[] needed to choose drives.
+   */
   public String[] getInfoArray(){
     String[] temp = new String[devs.length];
     for(int i=0; i<devs.length; i++){
@@ -279,6 +378,11 @@ public class Devices {
     }
     return temp; 
   }
+  
+  /**
+   * Returns a string that shows the status of Devices object/class
+   * @returns String containing status info
+   */
   public String toString(){
     String temp = "Is Mounted? " + isMounted() + " - " +
         (isMounted() ? getMounted().toString() : "N/A") ;
@@ -287,6 +391,11 @@ public class Devices {
     }
     return temp;
   }
+  
+  /**
+   * Retruns string array of blkid output, 
+   * @returns String array from command results
+   */
   public static String[] getRawBlkidOutput(){
     String[] hold;
     try{
@@ -297,6 +406,10 @@ public class Devices {
     }
     return hold;
   }
+  /**
+   * Returns string array of fdisk output, 
+   * @returns String array from command results
+   */
   public static String[] getRawFdiskOutput(){
     String[] hold;
     try{
@@ -307,11 +420,20 @@ public class Devices {
     }
     return hold;
   }
+  
   public static void main(String[] args){
-    
+    //unused
   }
 
-  
+  /**
+   * INNER class to contain the pre-mount information from devices.
+   * @author Justin A. Williams
+   * @version 0.0.8
+   * -location absolute path location
+   * -label volume name, if available
+   * -size estimated drive size
+   * -isPermanent true if drive should not be unmounted
+   */
   private class DeviceItem{
     private String location;
     private String label;
@@ -320,6 +442,12 @@ public class Devices {
     //private File mountedLocation;
     //private boolean isMounted;
     
+    /**
+     * Standard Constructor.
+     * @param loc absolute path location
+     * @param lbl drive label
+     * @param sz estimate total drive size
+     */
     public DeviceItem(String loc, String lbl, String sz){
       location = loc;
       label = lbl;
@@ -328,6 +456,13 @@ public class Devices {
       //mountedLocation = new File(MOUNT_LOCATION); 
     }
     
+    /**
+     * Constructor with permanent mount option.
+     * @param loc absolute path location
+     * @param lbl drive label
+     * @param sz estimate total drive size
+     * @param perm true if drive should not be unmouted
+     */
     public DeviceItem(String loc, String lbl, String sz, boolean perm){
       location = loc;
       label = lbl;
@@ -335,26 +470,49 @@ public class Devices {
       isPermanent = perm;
     }
 
+    /**
+     * Retruns full drive path.
+     * @returns location string
+     */
     public String getLocation() {
       return location;
     }
+    
+    /**
+     * Returns label of drive.
+     * @returns drive label string
+     */
     public String getLabel() {
       return label;
     }
+    
+    /**
+     * Returns estimate total drive size
+     * @returns drive size string
+     */
     public String getSize() {
       return size;
     }
+    
+    /**
+     * Returns true if drive wont be unmounted
+     */
     public boolean isPermanent() {
       return isPermanent;
     }
 
-/*		public boolean isMounted() {
+    /*
+    public boolean isMounted() {
       return isMounted;
     }
     public void setMounted(boolean mtnd) {
       this.isMounted = mtnd;
-    }
-*/
+    }*/
+    
+    /**
+     * Returns current status 
+     * @returns status string
+     */
     public String toString(){
       return location +" : "+ label + " - " + size;
     }

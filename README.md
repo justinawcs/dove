@@ -9,7 +9,7 @@ This README would normally document whatever steps are necessary to get your app
  	--thumbnail only button
  	--file list on GUI
  	--'df -h' to get partition size estimates? --> df only reads mounted fs, 
- 	 --wont work.
+ 	  --wont work.
  	--config and info config setters -> Wizards
  	--tui and gui for config.cfg file
  	--look for config files in home directory, System.getProperty("user.home");
@@ -48,14 +48,19 @@ This README would normally document whatever steps are necessary to get your app
  	Fix wildcard input statements, line wrap ok
  	logically order methods/members,
  	order overloaded methods, never split
- 	convert tabs to two spaces indents
+ 	--convert tabs to two spaces indents
  	break lines before symbols
- 	?ask to copy same to different device?
+ 	Flatten all toString to true one-liners
+ 	add logs ability and log levels
+ 	add recipt functionality, give time and date of transaction history in dove
+ 	    folder
+	?ask to copy same to different device?
 
 ###Bookmarks
 * http://stackoverflow.com/questions/13574461/need-to-have-jprogress-bar-to-measure-progress-when-copying-directories-and-file
 * see drive
 * [Copy Estimates](http://stackoverflow.com/questions/1152208/computing-estimated-times-of-file-copies-movements)
+* [File Size Limits](http://stackoverflow.com/questions/21926721/bash-how-to-find-the-max-supported-file-size-of-a-filesystem)
  	
 
 ### Online IDEs
@@ -64,6 +69,7 @@ This README would normally document whatever steps are necessary to get your app
 * [https://c9.io/](https://c9.io/) Good ide, compiles, cant run.
 * [https://codenvy.com/](https://codenvy.com/) Good ide, cant connect to bitbucket.
 ** [Possilbe Fix](http://docs.codenvy.com/user/tutorials/)
+
 ### Code Help
 * [Google Code Standards](https://google-styleguide.googlecode.com/svn/trunk/javaguide.html)
 * [JavaDoc](http://www.oracle.com/technetwork/articles/java/index-137868.html)
