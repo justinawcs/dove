@@ -210,6 +210,13 @@ public class Dove {
     }
   }//TODO add code to kiosk to chunk update properly.
   //wont copy folders
+  /**
+   * Performs byte level copying of file data. Does not copy folders, create
+   * new identical. 
+   * @param src Source file. 
+   * @param tgt Target file.
+   * @throws IOException if file not found/ copy problmes
+   */
   private void chunkCopy(File src, File tgt) throws IOException {
     BufferedInputStream in = null;
     BufferedOutputStream out = null;
