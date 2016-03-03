@@ -29,6 +29,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 //import javax.swing.BoxLayout;
 //import java.io.*;
 import javax.swing.*;
@@ -777,7 +778,7 @@ public class DoveGUI extends Dove{
       JButton listOcc = new JButton();
       String h = "<html>";
       String h2 = "<br/></html>";
-      int flag = 0;
+      int flag = 0; //Ready to Copy flag
         if(list.size() > 0 ){
           listOcc.setText(h+"List contains items."+h2);
           listOcc.setEnabled(false);
@@ -829,7 +830,7 @@ public class DoveGUI extends Dove{
           drvDoveSet.addActionListener(new DoveButtonListener() );
           flag++;
         }*/
-      JButton[] arr = { listOcc, listSpace, drvMounted };
+      JButton[] arr = { drvMounted, listOcc, listSpace  };
       //Box[] fill = new Box[arr.length];
       for(int i=0; i<arr.length; i++){
         //fill[i] = new Box(BoxLayout.LINE_AXIS);
@@ -849,11 +850,16 @@ public class DoveGUI extends Dove{
       Box bxBar = new Box(BoxLayout.PAGE_AXIS);
         bxBar.setBorder(BorderFactory.createTitledBorder(
             "Copy Progress"));
-        copyBar = new JProgressBar(SwingConstants.HORIZONTAL);
+        copyBar = new JProgressBar(SwingConstants.HORIZONTAL, 0, 100);
           //copyBar.setIndeterminate(true);
           //copyBar.setMaximum((int)listTotalSize);
-          copyBar.setMaximum(100);
-          copyBar.setString("Ready...");
+        String initCopyString = new String();  
+        if(flag == 0){
+            initCopyString = "Ready...";
+          }else{
+            initCopyString = "Not ready.";
+          }
+          copyBar.setString(initCopyString);
           copyBar.setStringPainted(true);
         lCopyStatus = new JLabel("Files remaining: ");
         bxBar.add(copyBar);
@@ -1696,37 +1702,47 @@ public class DoveGUI extends Dove{
   /**
    * Copies all selected ContentItems.
    */
-  private class FinalCopyButtonListener implements ActionListener{
+  private class FinalCopyButtonListener implements ActionListener, Runnable{
     public void actionPerformed(ActionEvent e){
       //((JButton)e.getSource()).setText("Now copying...");
       ((JButton)e.getSource()).setEnabled(false);
       copyBar.setIndeterminate(false);
       //copyBar.setString("0%");
       copyBar.setValue(0);
-      
       //Task copy = new Task();
       //copy.addPropertyChangeListener(new ProgressChangeListener());
+      
+      System.out.println( (SwingUtilities.isEventDispatchThread()) ? 
+          "Started On EDT": "NOT Started ON EDT" );
+      Thread t = new Thread(this);
+      t.start();//Spark that copy thread
+    }
+
+    @Override
+    public void run(){
+      System.out.println( (SwingUtilities.isEventDispatchThread()) ? 
+          "Thread On EDT": "Thread NOT Started On EDT" );
       Copier copy = new Copier(list, listTotalSize, getDevices(), 
           copyBar, lCopyStatus);
-      try {
+      try{
         copy.execute();
         copy.get();
       } catch (InterruptedException e1) {
-        // TODO Auto-generated catch block
+        // TODO Auto-generated catch block, send errors to EDT
         e1.printStackTrace();
       } catch (ExecutionException e1) {
-        // TODO Auto-generated catch block
+        // TODO Auto-generated catch block, send errors to EDT
         e1.printStackTrace();
-      }
-      
-      //copy.done();
-      
-      
-      list.clear();
-      listTotalSize = 0;
-      getDevices().getMountedDrive().refresh();
-      updateBars();
-      
+      }finally{
+        SwingUtilities.invokeLater(new Runnable(){
+          public void run(){
+            list.clear();
+            listTotalSize = 0;
+            getDevices().getMountedDrive().refresh();
+            updateBars();
+          }
+        });
+      }     
     }
   }
   
@@ -1747,7 +1763,7 @@ public class DoveGUI extends Dove{
           if(!getDevices().getMountedDrive().isSetup()){
             getDevices().getMountedDrive().setupDrive();
           }
-          Thread.sleep(1000); //TODO Remove pause!
+          Thread.sleep(1000); //Remove pause!
           copy(list.get(i) );
           
           bytesCopied += getBytesCopied();
@@ -1996,6 +2012,11 @@ public class DoveGUI extends Dove{
    * Main method.
    */
   public static void main(String[] args) {
-    new DoveGUI();
+    SwingUtilities.invokeLater(new Runnable(){
+      public void run(){
+        new DoveGUI();
+      }
+    }); 
   } 
+  
 }

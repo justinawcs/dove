@@ -109,7 +109,8 @@ public class ContentItem{
         names.add( bc + File.separator + files[i].getName() );
         //every file/folder, etc.  item gets copied, folder get delved into 
         if(files[i].isDirectory()){
-          makeNames(files[i], bc + File.separator + files[i].getName());
+          makeNames(files[i], bc + File.separator + files[i].getName()
+          + File.separator);
         }
       }
     }
