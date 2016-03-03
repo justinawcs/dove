@@ -108,15 +108,18 @@ public class Dove {
       String ans;
       System.out.println(WARN + "\nPress q to quit, or press enter to " +
           "acknowledge and continue.");
-      ans = key.nextLine();
-      if(ans.startsWith("q")){
-        System.exit(0);
+      ans = key.nextChar();
+      if(ans.isEqualIgnoreCase("q"){
+        System.exit();
       }
       key.close();
     }else{
       //GUI present use JOptionPane to warn user, then continue
-      JOptionPane.showMessageDialog(null, WARN, "Configuration", 
+      int opt = JOptionPane.showMessageDialog(null, WARN, "Configuration", 
       JOptionPane.WARNING_MESSAGE, null);
+      if(opt == JOptionPane.Exit){
+        System.exit();
+      }
       //hit ok continues, exit closes program
     }
   }
@@ -216,12 +219,13 @@ public class Dove {
       }
     }
   }//TODO add code to kiosk to chunk update properly.
+  //wont copy folders
   /**
-   * Splits files into small chunks of given length and copies them to allow
-   *     time tracking of process. Cannot copy folders.
-   * @param src Source File being copied
-   * @param tgt Target file destination
-   * @throws IOException 
+   * Performs byte level copying of file data. Does not copy folders, create
+   * new identical. 
+   * @param src Source file. 
+   * @param tgt Target file.
+   * @throws IOException if file not found/ copy problmes
    * @see BUFFER_LENGTH
    */
   private void chunkCopy(File src, File tgt) throws IOException {
@@ -270,8 +274,6 @@ public class Dove {
       out.close();
     }
   }
-  
-  
   
   /**
    * Converts long byte length to readable string 
