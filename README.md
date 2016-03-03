@@ -58,7 +58,9 @@ This README would normally document whatever steps are necessary to get your app
  	break lines before symbols
  	Flatten all toString to true one-liners
  	add logs ability and log levels: use SLF4J with Log4J
- 	add recipts, give time and date of transaction history in dove folder
+ 	add receipts, give time and date of transaction history in dove folder
+ 	change build type to maven, and flesh out
+ 	
  	
  	
 
