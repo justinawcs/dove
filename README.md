@@ -60,8 +60,7 @@ This README would normally document whatever steps are necessary to get your app
  	add logs ability and log levels: use SLF4J with Log4J
  	add receipts, give time and date of transaction history in dove folder
  	change build type to maven, and flesh out
- 	
- 	
+ 	add command-line parse
  	
 
 ###Bookmarks
