@@ -61,7 +61,7 @@ This README would normally document whatever steps are necessary to get your app
  	add receipts, give time and date of transaction history in dove folder
  	change build type to maven, and flesh out
  	add command-line parse
- 	
+ 	add JUnit testing
 
 ###Bookmarks
 * http://stackoverflow.com/questions/13574461/need-to-have-jprogress-bar-to-measure-progress-when-copying-directories-and-file
