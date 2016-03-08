@@ -108,19 +108,19 @@ public class Dove {
       String ans;
       System.out.println(WARN + "\nPress q to quit, or press enter to " +
           "acknowledge and continue.");
-      ans = key.nextChar();
-      if(ans.isEqualIgnoreCase("q"){
-        System.exit();
+      ans = key.next().substring(0, 1);
+      if(ans.equalsIgnoreCase("q")){
+        System.exit(0);
       }
       key.close();
     }else{
       //GUI present use JOptionPane to warn user, then continue
-      int opt = JOptionPane.showMessageDialog(null, WARN, "Configuration", 
-      JOptionPane.WARNING_MESSAGE, null);
-      if(opt == JOptionPane.Exit){
-        System.exit();
+      int opt = JOptionPane.showConfirmDialog(null, WARN, "Configuration", 
+      JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null);
+      //hit okay continues, cancel/exit closes program
+      if(opt == JOptionPane.CLOSED_OPTION || opt == JOptionPane.CANCEL_OPTION){
+        System.exit(0);
       }
-      //hit ok continues, exit closes program
     }
   }
   
