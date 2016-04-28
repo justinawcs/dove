@@ -59,9 +59,13 @@ This README would normally document whatever steps are necessary to get your app
  	Flatten all toString to true one-liners
  	add logs ability and log levels: use SLF4J with Log4J
  	add receipts, give time and date of transaction history in dove folder
+ 	add flavor and legal payload from content origin w/ Folder creation
  	change build type to maven, and flesh out
  	add command-line parse
 	?ask to copy same to different device?
+	login portal to advanced mode
+	line breaks and other simple formatting in content description
+		
 
 ###Bookmarks
 * http://stackoverflow.com/questions/13574461/need-to-have-jprogress-bar-to-measure-progress-when-copying-directories-and-file
