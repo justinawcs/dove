@@ -1,3 +1,4 @@
+import java.text.DecimalFormat;
 import java.util.List;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -30,6 +31,7 @@ public class Copier extends SwingWorker<Boolean, Long> {
   private Date startTime; 
   private Date segmentTime;
   private static int MAX_RANGE = 100;
+  private final DecimalFormat form = new DecimalFormat("#0.00");
   
   public Copier(ArrayList<ContentItem> list, 
       long listTotalSize, 
@@ -210,11 +212,12 @@ public class Copier extends SwingWorker<Boolean, Long> {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+    //convert time from milliseconds to seconds
+    float seconds = (new Date().getTime() - startTime.getTime() ) / 1000f ;
     progressBar.setString("Finished.");
     String result = "Done. Copied: "+ bytesCopied +"(" +
         Dove.humanReadableByteCount(bytesCopied, true) +") of " +
-        listTotalSize + " Elapsed Time(sec): "+
-        (new Date().getTime() - startTime.getTime())/1000L;
+        listTotalSize + " Elapsed Time(sec): " + form.format(seconds) ;
     statusLabel.setText(result);
     System.out.println(result); 
     //bRemoveDevice.setEnabled(true);
