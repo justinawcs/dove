@@ -62,9 +62,11 @@ public class ConfigWizard {
       contentLoc = configProps.getProperty("contentLocation");
       folderName = configProps.getProperty("folderName");
       grepEx = Boolean.parseBoolean(configProps.getProperty("grepExcludes") );
-      noThumbs = Boolean.parseBoolean(configProps.getProperty("allowNoThumbContent") );
-      searchFileNames = Boolean.parseBoolean(configProps.getProperty("searchFileNames") );
-      System.out.println("[ConfigWizard] Config file successfully loaded: "+ 
+      noThumbs = Boolean.parseBoolean(configProps.getProperty(
+        "allowNoThumbContent") );
+      searchFileNames = Boolean.parseBoolean(configProps.getProperty(
+        "searchFileNames") );
+      System.out.println("[ConfigWizard] Config file successfully loaded: " + 
       config.getAbsolutePath().toString());
     }
     boolean done = false;
@@ -84,7 +86,8 @@ public class ConfigWizard {
     }
     String[] opts = {"Continue","Help", "Exit"};
     int n = JOptionPane.showOptionDialog(null, header, "Dove Configuration", 
-        JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, opts, opts[0] );
+        JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, 
+        null, opts, opts[0] );
     if(n == JOptionPane.CANCEL_OPTION || n == JOptionPane.CLOSED_OPTION){
       done = true; //Bypass loop, Program exit.
     }else if(n == JOptionPane.NO_OPTION){
@@ -104,7 +107,6 @@ public class ConfigWizard {
       frame.add(page);
       frame.pack();
       //frame.setLocationRelativeTo(null);
-      
       //JOptionPane.showMessageDialog(null, help, "Config Help",
       //		JOptionPane.INFORMATION_MESSAGE);
     }
@@ -151,7 +153,8 @@ public class ConfigWizard {
       System.out.println("[ConfigWizard] FolderName: " + folderName);
       
       //GrepExcludes Dialog
-      header = "Will the drives listed in 'skippedDrives' be skipped?\nDefault is yes.";
+      header = "Will the drives listed in 'skippedDrives' be skipped?" + 
+        "\nDefault is yes.";
       //Object[] options = {"Yes", "No"};
       //JOptionPane optionPane = new JOptionPane(
       //	    header, JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION);
@@ -168,10 +171,11 @@ public class ConfigWizard {
       System.out.println("[ConfigWizard] GrepEx: " + grepEx);
       
       //allowNoThumbnails Dialog
-      header = "Would you like to display content items that do NOT have thumbnail images?";
+      header = "Would you like to display content items that do NOT have" + 
+        " thumbnail images?";
         //Object[] options = {"Yes", "No"};
         //JOptionPane optionPane = new JOptionPane(
-        //	    header, JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION);
+        //header, JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION);
       n = JOptionPane.showConfirmDialog(null, header, "AllowNoThumbContent", 
            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
       if(n == JOptionPane.YES_OPTION){
@@ -185,11 +189,11 @@ public class ConfigWizard {
       System.out.println("[ConfigWizard] AllowNoThumbnailContent: " + noThumbs);
       
       //SearchFileNames Dialog
-      header = "Would you like to search through content items using filenames?\n" +
-          "This takes more time but improves searches.";
+      header = "Would you like to search through content items using " +
+          "filenames?\nThis takes more time but improves searches.";
         //Object[] options = {"Yes", "No"};
         //JOptionPane optionPane = new JOptionPane(
-        //	    header, JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION);
+        //header, JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION);
       n = JOptionPane.showConfirmDialog(null, header, "SearchFileNames", 
            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
       if(n == JOptionPane.YES_OPTION){
@@ -233,25 +237,29 @@ public class ConfigWizard {
           configProps.setProperty("contentLocation", contentLoc);
           configProps.setProperty("folderName", folderName);
           configProps.setProperty("grepExcludes", String.valueOf(grepEx) );
-          configProps.setProperty("allowNoThumbContent", String.valueOf(noThumbs) );
-          configProps.setProperty("searchFileNames", String.valueOf(searchFileNames) );
+          configProps.setProperty("allowNoThumbContent", 
+            String.valueOf(noThumbs) );
+          configProps.setProperty("searchFileNames", 
+            String.valueOf(searchFileNames) );
           configProps.store(output, null );
           System.out.println("Configuration file completed.");
           output.close();
-          JOptionPane.showMessageDialog(null, "Configuration file completed.\nFile written to "+
-              config.toString()+"\nProgram will now exit.");
+          JOptionPane.showMessageDialog(null, "Configuration file completed." +
+            "\nFile written to "+ config.toString()+"\nProgram will now exit.");
         }catch(IOException io){
           io.printStackTrace();
         }
       }else if (n == JOptionPane.NO_OPTION){
         // loop around
-      }else if (n == JOptionPane.CLOSED_OPTION || n== JOptionPane.CANCEL_OPTION){
+      }else if (n == JOptionPane.CLOSED_OPTION ||
+        n== JOptionPane.CANCEL_OPTION){
         done = true;
         System.out.println("Program terminated.");
         System.exit(0);
         //break;
       }else{}
-      //System.out.println("[ConfigWizard] SearchFileNames: " + searchFileNames);
+      //System.out.println("[ConfigWizard] SearchFileNames: " 
+      //  + searchFileNames);
     }
     System.out.println("Program terminated.");
     System.exit(0);
@@ -271,8 +279,8 @@ public class ConfigWizard {
     grepExcludes=true
     allowNoThumbContent=true
     searchFileNames=true */ 
-    //check for existing config.cfg, pull data if available, ask if correct, terminate
-    //no config, ask questions,
+    //check for existing config.cfg, pull data if available,
+    //ask if correct, terminaten. No config, ask questions,
     Properties configProps = new Properties();
     File config = new File(System.getProperty("user.home")
         +File.separator+".dove"+File.separator +"config.cfg");
@@ -289,10 +297,13 @@ public class ConfigWizard {
       cfgMountLoc = configProps.getProperty("mountLocation");
       cfgContentLoc = configProps.getProperty("contentLocation");
       cfgFolderName = configProps.getProperty("folderName");
-      cfgGrepEx = Boolean.parseBoolean(configProps.getProperty("grepExcludes") );
-      cfgNoThumbs = Boolean.parseBoolean(configProps.getProperty("allowNoThumbContent") );
-      cfgSearchFiles = Boolean.parseBoolean(configProps.getProperty("searchFileNames") );
-      System.out.println("[ConfigWizard] Config file successfully loaded: "+ config.getAbsolutePath().toString());
+      cfgGrepEx = Boolean.parseBoolean(configProps.getProperty("grepExcludes"));
+      cfgNoThumbs = Boolean.parseBoolean(configProps.getProperty(
+        "allowNoThumbContent") );
+      cfgSearchFiles = Boolean.parseBoolean(configProps.getProperty(
+        "searchFileNames") );
+      System.out.println("[ConfigWizard] Config file successfully loaded: " + 
+        config.getAbsolutePath().toString());
     }
     boolean exit = false, check = false;
     String input;
@@ -327,8 +338,8 @@ public class ConfigWizard {
         contentLoc = key.nextLine();
       }
       
-      System.out.print("Please enter the name that the folder will use on drives. " +
-          "ex. Vacation or SeaLab\n" +
+      System.out.print("Please enter the name that the folder will use on" + 
+        "drives. ex. Vacation or SeaLab\n" +
           (hasConfig ? "From config file: \t" + cfgFolderName : "" )+ "\n> ");
       folderName = key.nextLine();
       if(folderName.equals(".")){
@@ -339,7 +350,8 @@ public class ConfigWizard {
             +"\n> ");
       }
       
-      System.out.print("Please enter [true|false] if drives listed in config will not be used.\n"+
+      System.out.print("Please enter [true|false] if drives listed in config " +
+        "will not be used.\n"+
           (hasConfig ? "From config file: \t" + cfgGrepEx : "") +"\n> ");
       input = key.nextLine();
       check = false;
@@ -362,7 +374,8 @@ public class ConfigWizard {
         }
       }
       
-      System.out.print("Please enter [true|false] if content with no thumbnail images will be allowed.\n"+
+      System.out.print("Please enter [true|false] if content with no thumbnail"+
+        " images will be allowed.\n"+
           (hasConfig ? "From config file: \t" + cfgNoThumbs : "") +"\n> ");
       input = key.nextLine();
       check = false;
@@ -385,8 +398,9 @@ public class ConfigWizard {
         }
       }
       
-      System.out.print("Please enter [true|false] if filenames will be searched.\n"+
-          (hasConfig ? "From config file: \t" + cfgSearchFiles : "") +"\n> ");
+      System.out.print("Please enter [true|false] if filenames will be" +
+        " searched.\n" + (hasConfig ? "From config file: \t" + 
+        cfgSearchFiles : "") +"\n> ");
       input = key.nextLine();
       check = false;
       if(input.equals(".")){
@@ -448,9 +462,11 @@ public class ConfigWizard {
       configProps.setProperty("folderName", folderName);
       configProps.setProperty("grepExcludes", String.valueOf(grepEx) );
       configProps.setProperty("allowNoThumbContent", String.valueOf(noThumbs) );
-      configProps.setProperty("searchFileNames", String.valueOf(searchFileNames) );
+      configProps.setProperty("searchFileNames", 
+        String.valueOf(searchFileNames) );
       configProps.store(output,null );
-      System.out.println("Configuration file completed: " + config.getAbsolutePath() );
+      System.out.println("Configuration file completed: " + 
+        config.getAbsolutePath() );
       output.close();
     }catch(IOException io){
       io.printStackTrace();
