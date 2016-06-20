@@ -50,7 +50,7 @@ This README would normally document whatever steps are necessary to get your app
  	ability to change settings from inside program and restart
  	-- suggest content origin = folder name
  	add License or copyright information, if present
- 	Fix wildcard input statements
+ 	XX Fix wildcard input statements
  	-- limit line width to 80 char
  	logically order methods/members,
  	order overloaded methods, never split
@@ -65,7 +65,7 @@ This README would normally document whatever steps are necessary to get your app
 	?ask to copy same to different device?
 	login portal to advanced mode
 	line breaks and other simple formatting in content description
-		
+ 	add JUnit testing
 
 ###Bookmarks
 * http://stackoverflow.com/questions/13574461/need-to-have-jprogress-bar-to-measure-progress-when-copying-directories-and-file
