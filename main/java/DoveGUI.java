@@ -1712,16 +1712,16 @@ public class DoveGUI extends Dove{
       //Task copy = new Task();
       //copy.addPropertyChangeListener(new ProgressChangeListener());
       
-      System.out.println( (SwingUtilities.isEventDispatchThread()) ? 
-          "Started On EDT": "NOT Started ON EDT" );
+      //System.out.println( (SwingUtilities.isEventDispatchThread()) ? 
+      //    "Started On EDT": "NOT Started ON EDT" );
       Thread t = new Thread(this); //Points to Runnable Thread
       t.start();//Spark that copy thread, 
     }
 
     //@Override
     public void run(){
-      System.out.println( (SwingUtilities.isEventDispatchThread()) ? 
-          "Thread On EDT": "Thread NOT Started On EDT" );
+      System.out.println( (SwingUtilities.isEventDispatchThread() ? 
+          "Thread On EDT": "Thread NOT Started On EDT" ));
       Copier copy = new Copier(list, listTotalSize, getDevices(), 
           copyBar, lCopyStatus);
       try{
