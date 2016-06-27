@@ -1718,7 +1718,7 @@ public class DoveGUI extends Dove{
       t.start();//Spark that copy thread, 
     }
 
-    @Override
+    //@Override
     public void run(){
       System.out.println( (SwingUtilities.isEventDispatchThread()) ? 
           "Thread On EDT": "Thread NOT Started On EDT" );
