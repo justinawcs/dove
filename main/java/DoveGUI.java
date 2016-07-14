@@ -298,7 +298,6 @@ public class DoveGUI extends Dove{
     bSearch = new JButton("Search");// or icon of magnifying glass
     bSearch.addActionListener(new SearchButtonListener() );
     bClearSearch = new JButton("Clear");
-    bClearSearch.setToolTipText("Clear Search");
     bClearSearch.addActionListener(new SearchClearButtonListener() );
     bClearSearch.setMargin(new Insets(2,0,2,0));
     Box bxSearch = new Box(BoxLayout.LINE_AXIS);
@@ -355,7 +354,6 @@ public class DoveGUI extends Dove{
     //bFindTags = new JButton("Find");
     //bFindTags.addActionListener(new FindTagsButtonListener() );
     bClearTags = new JButton("Clear");
-    bClearTags.setToolTipText("Clear Type");
     bClearTags.addActionListener(new ClearTagsButtonListener() );
     //bClearTags.setMargin(new Insets(2,0,2,0));
     //bTagsANY.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -389,7 +387,6 @@ public class DoveGUI extends Dove{
     bClearAll = new JButton("Revert");
     bClearAll.addActionListener(new ClearAllButtonListener());
     cThumbsOnly = new JCheckBox("Thumbs Only");
-    cThumbsOnly.setToolTipText("Show only items with thumbnail images.");
     cThumbsOnly.addActionListener(new ThumbsOnlyButtonListener());
     //cFileNameSearch = new JCheckBox("Search Filenames");
     Box bxAdv = new Box(BoxLayout.PAGE_AXIS);
@@ -480,7 +477,6 @@ public class DoveGUI extends Dove{
     
     lWarn = new JLabel("");
     bRefreshDrives = new JButton("Refresh");
-    bRefreshDrives.setToolTipText("Refresh Drive Listing");
     bRefreshDrives.setMargin(new Insets(2,0,2,0));
     bRefreshDrives.addActionListener(new DriveRefreshListener() );
 		bRefreshDrives.addActionListener(new ActionListener(){
@@ -1016,7 +1012,6 @@ public class DoveGUI extends Dove{
         }else{
           num = new JButton(name, icon);
         }
-        num.setToolTipText(name);
         num.setVerticalAlignment(SwingConstants.CENTER);
         num.setVerticalTextPosition(SwingConstants.BOTTOM);
         num.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -1130,14 +1125,10 @@ public class DoveGUI extends Dove{
         //System.out.println(beforeBar.getForeground());
         beforeBar.setValue(Double.valueOf(beforeVal).intValue() );
         beforeBar.setString("Now: " + form.format(beforeVal/100) + "%");
-        beforeBar.setToolTipText("The current amout of space currently"
-            + " used on the drive.");
         beforeBar.setStringPainted(true);
         double afterVal = BAR_MAX - percentRemAfter * (BAR_MAX/100);  
         afterBar.setValue(Double.valueOf(afterVal).intValue());
         afterBar.setString("After: "+  form.format(afterVal/100) + "%");
-        afterBar.setToolTipText("The value amount of space that will" +
-            " be used by the drive after the file transfer.");
         afterBar.setStringPainted(true);
         if(percentRemAfter < 00.0d){
           afterBar.setForeground(new Color(5, 5, 5));
