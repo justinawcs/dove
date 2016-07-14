@@ -414,7 +414,7 @@ public class DoveGUI extends Dove{
     topBar = new JPanel();
     topBar.setLayout(new BorderLayout(10,10) );
     topBar.setBorder(BorderFactory.createEmptyBorder(5, 10, 0, 10));
-    Box siteNav = new Box(BoxLayout.LINE_AXIS);
+    JPanel siteNav = new JPanel(new GridLayout(1, 0, 3, 0));
       //1 Welcome
       bWelcome = new JButton("Welcome");
       bWelcome.addActionListener(new WelcomeButtonListener());
@@ -439,18 +439,15 @@ public class DoveGUI extends Dove{
       bWelcome = new JButton("Goodbye");
       bWelcome.addActionListener(new WelcomeButtonListener());
       siteNav.add(bWelcome);
-      //Space
-      siteNav.add(Box.createHorizontalGlue());
-      //Help
+      /*Help
       bHelp = new JButton("Help");
       bHelp.addActionListener(new HelpButtonListener());
-      siteNav.add(bHelp);
+      siteNav.add(bHelp);*/
     //JLabel greet = new JLabel("<html><h2>Welcome!</h2></html>");
     //greet.setFont(new Font(20)); // or just increase font size to larger
     lStatus = new JLabel();
     //lStatus.setAlignmentY(0.5f);
     updateStatus();
-    
     //topBar.add(greet, BorderLayout.WEST);
     topBar.add(siteNav, BorderLayout.NORTH);
     topBar.add(lStatus,BorderLayout.CENTER);
