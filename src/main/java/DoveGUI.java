@@ -42,10 +42,11 @@ import java.io.IOException;
 
 /**
  * Main GUI class. Handles mounting, selection, copying.
- * @author Justin Williams
+ * @author Justin A. Williams : jaw
  * @version 0.0.8
  *
  */
+
 @SuppressWarnings("serial")
 public class DoveGUI extends Dove{
   //TODO Load Dove differently to allowing tracking of loading at startup
@@ -64,10 +65,10 @@ public class DoveGUI extends Dove{
   private JRadioButton bAZ, bZA, bNew, bOld, bSmall, bLarge; 
   //bTagsANY, bTagsALL;
   private JButton bSearch, bClearSearch, /*bFindTags,*/ bClearTags, bClearAll;
-  private JButton bHelp, bSeeList, bCopy, bRefreshDrives;
+  private JButton bHelp, bSeeList, bCopy, bWelcome, bDrive;
   private JButton bFirst, bPrev, bNext, bLast, bClear, bPager;
-  private JButton bBack, bAdd, bRemoveDevice;
-  private JLabel lStatus, lWarn, lData, lCopyStatus;
+  private JButton bBack, bAdd, bRefreshDrives, bRemoveDevice;
+  private JLabel lStatus, lData, lCopyStatus;
   private JTextField tSearch;
   private JProgressBar beforeBar, afterBar, copyBar, loadBar;
   private JComboBox<String> driveList;
@@ -187,7 +188,7 @@ public class DoveGUI extends Dove{
       //option.add(bGoSearch);
       option.add(Box.createHorizontalGlue());
     welcomeCard.add(lWelcome, BorderLayout.NORTH);
-    welcomeCard.add(bxWelcome);
+    //welcomeCard.add(bxWelcome);
     welcomeCard.add(option, BorderLayout.SOUTH);
   }
   
@@ -297,7 +298,6 @@ public class DoveGUI extends Dove{
     bSearch = new JButton("Search");// or icon of magnifying glass
     bSearch.addActionListener(new SearchButtonListener() );
     bClearSearch = new JButton("Clear");
-    bClearSearch.setToolTipText("Clear Search");
     bClearSearch.addActionListener(new SearchClearButtonListener() );
     bClearSearch.setMargin(new Insets(2,0,2,0));
     Box bxSearch = new Box(BoxLayout.LINE_AXIS);
@@ -354,7 +354,6 @@ public class DoveGUI extends Dove{
     //bFindTags = new JButton("Find");
     //bFindTags.addActionListener(new FindTagsButtonListener() );
     bClearTags = new JButton("Clear");
-    bClearTags.setToolTipText("Clear Type");
     bClearTags.addActionListener(new ClearTagsButtonListener() );
     //bClearTags.setMargin(new Insets(2,0,2,0));
     //bTagsANY.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -388,7 +387,6 @@ public class DoveGUI extends Dove{
     bClearAll = new JButton("Revert");
     bClearAll.addActionListener(new ClearAllButtonListener());
     cThumbsOnly = new JCheckBox("Thumbs Only");
-    cThumbsOnly.setToolTipText("Show only items with thumbnail images.");
     cThumbsOnly.addActionListener(new ThumbsOnlyButtonListener());
     //cFileNameSearch = new JCheckBox("Search Filenames");
     Box bxAdv = new Box(BoxLayout.PAGE_AXIS);
@@ -408,7 +406,7 @@ public class DoveGUI extends Dove{
   }
   
   /**
-   * Creates informational topbar.
+   * Creates informational topbar with navigation.
    */
   public void makeTopBar(){
     //Information Current Status & help
@@ -416,26 +414,56 @@ public class DoveGUI extends Dove{
     topBar = new JPanel();
     topBar.setLayout(new BorderLayout(10,10) );
     topBar.setBorder(BorderFactory.createEmptyBorder(5, 10, 0, 10));
+    JPanel siteNav = new JPanel(new GridLayout(1, 0, 3, 0));
+      //1 Welcome
+      bWelcome = new JButton("Welcome");
+      bWelcome.addActionListener(new WelcomeButtonListener());
+      siteNav.add(bWelcome);
+      //2 Insert Drive / 
+      bDrive = new JButton("Connect");
+      bDrive.addActionListener(new DriveButtonListener());
+      siteNav.add(bDrive);
+      //3 Make Selection / Looping
+      bBack = new JButton("Choose...");
+      bBack.addActionListener(new BackButtonListener());
+      siteNav.add(bBack);
+      //4 See List/Make Correction
+      bSeeList = new JButton("See Basket");
+      bSeeList.addActionListener(new ListButtonListener());
+      siteNav.add(bSeeList);
+      //5 Copy Screen/Final Confirm
+      bCopy = new JButton("Copy Basket");
+      bCopy.addActionListener(new CopyButtonListener());
+      siteNav.add(bCopy);
+      //6 Eject and Goodbye
+      bWelcome = new JButton("Goodbye");
+      bWelcome.addActionListener(new WelcomeButtonListener());
+      siteNav.add(bWelcome);
+      /*Help
+      bHelp = new JButton("Help");
+      bHelp.addActionListener(new HelpButtonListener());
+      siteNav.add(bHelp);*/
     //JLabel greet = new JLabel("<html><h2>Welcome!</h2></html>");
     //greet.setFont(new Font(20)); // or just increase font size to larger
     lStatus = new JLabel();
     //lStatus.setAlignmentY(0.5f);
     updateStatus();
-    bHelp = new JButton("Help...");
-    bHelp.addActionListener(new HelpButtonListener());
     //topBar.add(greet, BorderLayout.WEST);
+    topBar.add(siteNav, BorderLayout.NORTH);
     topBar.add(lStatus,BorderLayout.CENTER);
-    topBar.add(bHelp, BorderLayout.EAST);
     panel.add(topBar, BorderLayout.NORTH);
   }
   
+  /**
+   * Creates informational bottom bar
+   */
   public void makeBottomBar(){
     //N-set Buttons: See Manifest/List, Ready Transfer, Eject Drive
     //S-set-1 Labels: Text info, Selected Size, Free Space Est. Used Space
     //S-set 2 Label: Drive Name, Progress Bar Remaining Space/Free Space 
     botBar = new JPanel();
     botBar.setLayout(new BorderLayout());
-    bSeeList = new JButton("See List");
+/*    bSeeList = new JButton("See List");
     bSeeList.addActionListener(new ListButtonListener() );
     bCopy = new JButton("Copy List");
     bCopy.addActionListener(new CopyButtonListener() );
@@ -446,10 +474,9 @@ public class DoveGUI extends Dove{
     
     lWarn = new JLabel("");
     bRefreshDrives = new JButton("Refresh");
-    bRefreshDrives.setToolTipText("Refresh Drive Listing");
     bRefreshDrives.setMargin(new Insets(2,0,2,0));
     bRefreshDrives.addActionListener(new DriveRefreshListener() );
-/*		bRefreshDrives.addActionListener(new ActionListener(){
+		bRefreshDrives.addActionListener(new ActionListener(){
       @Override
       public void actionPerformed(ActionEvent e){
         if(main.getDevices().isMounted() ){//unmount on any change
@@ -463,7 +490,7 @@ public class DoveGUI extends Dove{
         }
         updateDriveList();
       }
-    });*/
+    });
     //bEject = new JButton("Eject Drive");
     //bEject.addActionListener(new EjectButtonListener() );
     //bDriveInfo = new JButton("Drive Info...");
@@ -486,6 +513,7 @@ public class DoveGUI extends Dove{
       hz.add(bCopy);
       hz.add(Box.createRigidArea(hSpace));
       //hz.setAlignmentX(5f);
+*/
     beforeBar = new JProgressBar(SwingConstants.HORIZONTAL, 0, BAR_MAX);
     afterBar = new JProgressBar(SwingConstants.HORIZONTAL, 0, BAR_MAX);
     updateBars();
@@ -495,7 +523,7 @@ public class DoveGUI extends Dove{
       vt.add(beforeBar);
       vt.add(afterBar);
     botBar.add(Box.createRigidArea(vSpace), BorderLayout.NORTH);
-    botBar.add(hz,BorderLayout.CENTER);
+    //botBar.add(hz,BorderLayout.CENTER);
     botBar.add(vt, BorderLayout.SOUTH);
     panel.add(botBar, BorderLayout.SOUTH);
   }
@@ -981,7 +1009,6 @@ public class DoveGUI extends Dove{
         }else{
           num = new JButton(name, icon);
         }
-        num.setToolTipText(name);
         num.setVerticalAlignment(SwingConstants.CENTER);
         num.setVerticalTextPosition(SwingConstants.BOTTOM);
         num.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -1095,14 +1122,10 @@ public class DoveGUI extends Dove{
         //System.out.println(beforeBar.getForeground());
         beforeBar.setValue(Double.valueOf(beforeVal).intValue() );
         beforeBar.setString("Now: " + form.format(beforeVal/100) + "%");
-        beforeBar.setToolTipText("The current amout of space currently"
-            + " used on the drive.");
         beforeBar.setStringPainted(true);
         double afterVal = BAR_MAX - percentRemAfter * (BAR_MAX/100);  
         afterBar.setValue(Double.valueOf(afterVal).intValue());
         afterBar.setString("After: "+  form.format(afterVal/100) + "%");
-        afterBar.setToolTipText("The value amount of space that will" +
-            " be used by the drive after the file transfer.");
         afterBar.setStringPainted(true);
         if(percentRemAfter < 00.0d){
           afterBar.setForeground(new Color(5, 5, 5));
@@ -1591,7 +1614,7 @@ public class DoveGUI extends Dove{
    */
   private class DriveListListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
-      lWarn.setText("");
+      //lWarn.setText("");
       int index = driveList.getSelectedIndex();
       if(getDevices().isMounted() ){//unmount on any change
         getDevices().unmount();
@@ -1609,7 +1632,7 @@ public class DoveGUI extends Dove{
           //lWarn.setText("");
           updateBars();
         }else{
-          lWarn.setText("Drive not Mounted, cannot be used.");
+          //lWarn.setText("Drive not Mounted, cannot be used.");
           updateBars();
           //add warning that drive did not mount, cannot be used.
         }
@@ -1630,17 +1653,19 @@ public class DoveGUI extends Dove{
         getDevices().unmount();
         System.out.println("Unmounted: "+
         getDevices().getMountedDrive());
-      }
+      }else{
         //drv.setSelected(true);
       //drv.setSelected(false);
       getDevices().mount(index);
       drv.setText(getDevices().getInfoArray()[index]+
           "\n--Now Mounted--");
+      }
+      
       updateBars();
+      updateStatus();
       cardPanel.remove(driveCard);
       cards.first(cardPanel);
       //if( ){//unmount on any change}
-      
     }
   }
   
@@ -1712,16 +1737,16 @@ public class DoveGUI extends Dove{
       //Task copy = new Task();
       //copy.addPropertyChangeListener(new ProgressChangeListener());
       
-      System.out.println( (SwingUtilities.isEventDispatchThread()) ? 
-          "Started On EDT": "NOT Started ON EDT" );
+      //System.out.println( (SwingUtilities.isEventDispatchThread()) ? 
+      //    "Started On EDT": "NOT Started ON EDT" );
       Thread t = new Thread(this); //Points to Runnable Thread
       t.start();//Spark that copy thread, 
     }
 
-    @Override
+    //@Override
     public void run(){
-      System.out.println( (SwingUtilities.isEventDispatchThread()) ? 
-          "Thread On EDT": "Thread NOT Started On EDT" );
+      System.out.println( (SwingUtilities.isEventDispatchThread() ? 
+          "Thread On EDT": "Thread NOT Started On EDT" ));
       Copier copy = new Copier(list, listTotalSize, getDevices(), 
           copyBar, lCopyStatus);
       try{

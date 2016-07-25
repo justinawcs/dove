@@ -189,8 +189,8 @@ public class Copier extends SwingWorker<Boolean, Long> {
       progressBar.revalidate();
       progressBar.getParent().revalidate();
       //System.out.print(bytesCopied +" : "+ listTotalSize + ">>");
-      System.out.print(progressPercent +" "+ progress +" ");
-      System.out.println(progressBar.getModel().toString());
+      System.out.println("Progress: " +progressPercent +" "+ progress +" ");
+      //System.out.println(progressBar.getModel().toString());
       //System.out.print (progress+"%  ");
       String copied = Dove.humanReadableByteCount(update, true);
       String avgRate = Dove.humanReadableByteCount(averageRate, true) + "/s";

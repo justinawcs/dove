@@ -509,9 +509,9 @@ public class InfoMakerGUI extends JFrame {//add extends InfoMaker
    * Updates Output textfield when Name textfield losses focus. 
    */
   private class NameFocusListener implements FocusListener{
-    @Override
+    //@Override
     public void focusGained(FocusEvent arg0) {}
-    @Override
+    //@Override
     public void focusLost(FocusEvent arg0) {
       if(cFolder.isSelected()){
         //Append to output String 
