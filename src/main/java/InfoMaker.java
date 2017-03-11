@@ -27,8 +27,9 @@ public class InfoMaker {
    * @param other boolean other data
    * @param path absolute filepath 
    */
-  public InfoMaker(String name, String org, String desc, boolean vid, boolean aud,
-          boolean mus, boolean doc, boolean pic, boolean other, File path) throws IOException{
+  public InfoMaker(String name, String org, String desc, boolean vid, 
+        boolean aud, boolean mus, boolean doc, boolean pic, boolean other, 
+        File path) throws IOException{
     Info result = new Info(name, org, desc, vid, aud, mus, doc, pic, other);
     writeOut(result, path);
   }
@@ -84,11 +85,13 @@ public class InfoMaker {
    * @param path absolute filepath
    * @param img thumbnail file
    */
-  public static void writeOut(Info data, File path, File img) throws IOException{
+  public static void writeOut(Info data, File path, File img) 
+      throws IOException{
     //info.dat
     System.out.println("[InfoMaker] "+ data.toString());
     System.out.print("Info:"+ path + File.separator + "info.dat, ");
-    FileOutputStream out = new FileOutputStream(path.getAbsoluteFile() + File.separator + "info.dat");
+    FileOutputStream out = new FileOutputStream(path.getAbsoluteFile() 
+      + File.separator + "info.dat");
     ObjectOutputStream outputFile = new ObjectOutputStream(out);
     outputFile.writeObject(data);
     outputFile.close();
@@ -160,74 +163,4 @@ public class InfoMaker {
     //TODO convert image using compression, move from InfoMakerGUI
   }
   
-  /**
-   * Main method: interactive input to create content informational files.
-   * @param args not used
-   */
-  public static void main(String[] args) throws IOException{
-    // Creates a java readable file: info.dat
-    // and a human readable info.txt
-    String name, org, desc;
-    boolean vid, aud, mus, doc, pic, other;
-    Scanner key = new Scanner(System.in);
-    
-    System.out.println("Provide the following information about the content.");
-    System.out.println("Name? ");
-    name = key.nextLine();
-    //key.nextLine();
-    
-    System.out.println("Origin? ");
-    org = key.nextLine();
-    //key.nextLine();
-    
-    System.out.println("Description? ");
-    desc = key.nextLine();
-    //key.nextLine();
-    
-    System.out.println("Video? ");
-    vid = key.nextBoolean();
-    
-    System.out.println("Audio? ");
-    aud = key.nextBoolean();
-    
-    System.out.println("Music? ");
-    mus = key.nextBoolean();
-    
-    System.out.println("Document? ");
-    doc = key.nextBoolean();
-    
-    System.out.println("Pictures? ");
-    pic = key.nextBoolean();
-    
-    System.out.println("Other? ");
-    other = key.nextBoolean();
-    key.close();
-    System.out.println();
-    Info result = new Info(name, org, desc, vid, aud, mus, doc, pic, other);
-    File currentDir = new File(System.getProperty("user.dir"));
-    
-    if(args.length > 0 ){
-      File thumb = new File(args[0]);
-      if(thumb.isFile()){
-        System.out.println("Thumbnail Image Filename: "+args[0]);
-        writeOut(result, currentDir,new File(args[0]));
-        copyImg(currentDir, new File(args[0]));
-      }
-    }else{
-      writeOut(result, currentDir);
-    }
-    System.out.println("Data created successfully.");
-    /* Block moved to writeOut()
-    System.out.println(result.toString());
-    FileOutputStream out = new FileOutputStream("info.dat");
-    ObjectOutputStream outputFile = new ObjectOutputStream(out);
-    outputFile.writeObject(result);
-    outputFile.close();
-    
-    FileWriter fw = new FileWriter("info.txt");
-    PrintWriter print = new PrintWriter(fw);
-    print.println(result.toString());
-    print.close();
-    */
-  }
 }
